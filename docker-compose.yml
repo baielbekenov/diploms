@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  konditer:
+    build:
+      context: ./konditer
+    container_name: konditer
+    ports:
+      - "8010:8010"
+    volumes:
+      - ./konditer/db.sqlite3:/app/db.sqlite3
+    working_dir: /app
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:8010
