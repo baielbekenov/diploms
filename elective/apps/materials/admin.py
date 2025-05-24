@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.materials.models import ElectiveCourse, CourseModule, Enrollment, Progress
+
+admin.site.register(ElectiveCourse)
+admin.site.register(CourseModule)
+admin.site.register(Enrollment)
+admin.site.register(Progress)
+
