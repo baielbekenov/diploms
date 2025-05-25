@@ -33,3 +33,14 @@ services:
       - ./logist/db.sqlite3:/app/db.sqlite3
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:8030
+
+  toursite:
+    build:
+      context: ./toursite
+    container_name: toursite
+    ports:
+      - "8040:8040"
+    volumes:
+      - ./toursite/db.sqlite3:/app/db.sqlite3
+    working_dir: /app
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:8040

@@ -1,0 +1,193 @@
+<!doctype html>
+{% load static %}
+<html lang="zxx">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Traversal | Контакты </title>
+  <!-- google fonts -->
+  <link href="//fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="//fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <!-- google fonts -->
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/style-liberty.css' %}">
+  <!-- Template CSS -->
+</head>
+
+<body>
+  <!--header-->
+  <header id="site-header" class="fixed-top">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg stroke">
+        <h1><a class="navbar-brand mr-lg-5" href="{% url 'index' %}">
+            Traversal
+          </a></h1>
+        <!-- if logo is image enable this
+      <a class="navbar-brand" href="#index.html">
+          <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
+      </a> -->
+        <button class="navbar-toggler  collapsed bg-gradient" type="button" data-toggle="collapse"
+          data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+          <span class="navbar-toggler-icon fa icon-close fa-times"></span>
+          </span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'index' %}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">О нас</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'services' %}">Направления</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'pricing' %}">Прайс лист</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Блог<span class="fa fa-angle-down"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                <a class="dropdown-item" href="{% url 'blog' %}">Блоги</a>
+                <a class="dropdown-item" href="{% url 'index' %}">Лэндинговая страница</a>
+              </div>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'contact' %}">Контакты</a>
+            </li>
+
+          </ul>
+        </div>
+        <div class="d-lg-block d-none">
+          <a href="{% url 'contact' %}" class="btn btn-style btn-secondary">Связаться</a>
+        </div>
+        <!-- toggle switch for light and dark theme -->
+        <div class="mobile-position">
+          <nav class="navigation">
+            <div class="theme-switch-wrapper">
+              <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox">
+                <div class="mode-container">
+                  <i class="gg-sun"></i>
+                  <i class="gg-moon"></i>
+                </div>
+              </label>
+            </div>
+          </nav>
+        </div>
+        <!-- //toggle switch for light and dark theme -->
+      </nav>
+    </div>
+  </header>
+  <!-- //header -->
+  <!-- about breadcrumb -->
+  <section class="w3l-about-breadcrumb text-left">
+    <div class="breadcrumb-bg breadcrumb-bg-about py-sm-5 py-4">
+      <div class="container py-2">
+        <h2 class="title">Бронирование тура</h2>
+        <ul class="breadcrumbs-custom-path mt-2">
+          <li><a href="{% url 'index' %}">Главная</a></li>
+          <li class="active"><span class="fa fa-arrow-right mx-2" aria-hidden="true"></span> Забронировать </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- //about breadcrumb -->
+<!-- contact-form -->
+<section class="w3l-contact" id="contact">
+  <div class="contact-infubd py-5">
+    <div class="container py-lg-3">
+      <div class="contact-grids row">
+        <div class="col-lg-6 contact-left">
+          <div class="partners">
+            <div class="cont-details">
+              <h5>Бронировать тур</h5>
+              <p class="mt-3 mb-4">Привет! Мы доступны круглосуточно и без выходных </p>
+            </div>
+            <div class="hours">
+              <h6 class="mt-4">Тур:</h6>
+              <p> <a href="">
+                {{ tour_id.name }}</a></p>
+              <h6 class="mt-4">Дата:</h6>
+              <p> {{ tour_id.date }}</p>
+              <h6 class="mt-4">Длительность:</h6>
+              <p class="margin-top"><a href="">{{ tour_id.destination.duration }}</a></p>
+              <h6 class="mt-4">Цена:</h6>
+              <p class="margin-top"><a href="">{{ tour_id.destination.price }}</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mt-lg-0 mt-5 contact-right">
+          <form action="{% url 'submit_booking' %}" method="POST" class="signin-form">
+              {% csrf_token %}
+              <div class="input-grids">
+                <div class="form-group">
+                  <input type="text" name="email" id="w3lName" placeholder="Почта" class="contact-input" />
+                </div>
+                <div class="form-group">
+                  <input type="text" name="name" id="w3lSender" placeholder="Имя фамилия" class="contact-input" required="" />
+                </div>
+                <div class="form-group">
+                  <input type="text" name="phone" id="w3lSubect" placeholder="Номер телефона" class="contact-input" />
+                </div>
+              </div>
+              <div class="form-group">
+                <input name="amount" id="w3lMessage" placeholder="Количество" required="">
+              </div>
+              <input type="hidden" name="tour_name" value="{{ tour_id.name }}">
+              <input type="hidden" name="tour_date" value="{{ tour_id.date }}">
+              <input type="hidden" name="tour_duration" value="{{ tour_id.destination.duration }}">
+              <input type="hidden" name="tour_price" value="{{ tour_id.destination.price }}">
+              <div class="text-right">
+                <button class="btn btn-style btn-primary">Отправить</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</section>
+<script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'assets/js/theme-change.js' %}"></script>
+  <!--/MENU-JS-->
+  <script>
+    $(window).on("scroll", function () {
+      var scroll = $(window).scrollTop();
+
+      if (scroll >= 80) {
+        $("#site-header").addClass("nav-fixed");
+      } else {
+        $("#site-header").removeClass("nav-fixed");
+      }
+    });
+
+    //Main navigation Active Class Add Remove
+    $(".navbar-toggler").on("click", function () {
+      $("header").toggleClass("active");
+    });
+    $(document).on("ready", function () {
+      if ($(window).width() > 991) {
+        $("header").removeClass("active");
+      }
+      $(window).on("resize", function () {
+        if ($(window).width() > 991) {
+          $("header").removeClass("active");
+        }
+      });
+    });
+  </script>
+  <!--//MENU-JS-->
+
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+</body>
+
+</html>

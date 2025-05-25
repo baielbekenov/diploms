@@ -1,0 +1,285 @@
+<!doctype html>
+{% load static %}
+<html lang="zxx">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Traversal Travel Category Bootstrap Responsive Template | About </title>
+  <!-- google fonts -->
+  <link href="//fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="//fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <!-- google fonts -->
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/style-liberty.css' %}">
+  <!-- Template CSS -->
+</head>
+
+<body>
+  <!--header-->
+  <header id="site-header" class="fixed-top">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg stroke">
+        <h1><a class="navbar-brand mr-lg-5" href="{% url 'index' %}">
+            Traversal
+          </a></h1>
+        <!-- if logo is image enable this
+      <a class="navbar-brand" href="#index.html">
+          <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
+      </a> -->
+        <button class="navbar-toggler  collapsed bg-gradient" type="button" data-toggle="collapse"
+          data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+          <span class="navbar-toggler-icon fa icon-close fa-times"></span>
+          </span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'index' %}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'about' %}">О нас</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'services' %}">Направления</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'pricing' %}">Прайс лист</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Блог<span class="fa fa-angle-down"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                <a class="dropdown-item" href="{% url 'blog' %}">Блоги</a>
+                <a class="dropdown-item" href="{% url 'index' %}">Лэндинговая страница</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'contact' %}">Контакты</a>
+            </li>
+
+          </ul>
+        </div>
+        <div class="d-lg-block d-none">
+          <a href="{% url 'contact' %}" class="btn btn-style btn-secondary">Связаться</a>
+        </div>
+        <!-- toggle switch for light and dark theme -->
+        <div class="mobile-position">
+          <nav class="navigation">
+            <div class="theme-switch-wrapper">
+              <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox">
+                <div class="mode-container">
+                  <i class="gg-sun"></i>
+                  <i class="gg-moon"></i>
+                </div>
+              </label>
+            </div>
+          </nav>
+        </div>
+        <!-- //toggle switch for light and dark theme -->
+      </nav>
+    </div>
+  </header>
+  <!-- //header -->
+  <!-- about breadcrumb -->
+
+  <!-- //about-6-->
+   <!-- /content-6-->
+   <section class="w3l-content-6 py-5">
+    <div class="container py-lg-5">
+      <div class="row">
+        <div class="col-lg-6 content-6-left pr-lg-5">
+          <h6 class="sub-title">Ищите ваше путешествие</h6>
+          <h3 class="hny-title">Результаты поиска</h3>
+        </div>
+      </div>
+    </div>
+</section>
+<!-- //content-6-->
+<section class="w3l-grids1">
+  <div class="hny-three-grids py-5">
+    <div class="container py-lg-5">
+      {% if tours %}
+      <div class="row">
+          {% for tour in tours %}
+        <div class="col-md-4 col-sm-6 mt-0 grids5-info">
+          <a href="#url"><img src="{{ tour.destination.image.url }}" class="img-fluid" alt=""></a>
+          <h5>{{ tour.date }}</h5>
+          <h4><a href="#url">{{ tour.name }}</a></h4>
+          <p>{{ tour.description }}</p>
+          <p></p>
+          <a href="{% url 'book_tour' tour.pk %}" class="btn btn-style btn-primary ml-lg-3">Забронировать</a>
+        </div>
+          {% endfor %}
+      </div>
+      {% else %}
+      <p>Туры не найдены.</p>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+  <footer>
+    <!-- footer -->
+    <section class="w3l-footer">
+      <div class="w3l-footer-16-main py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 column">
+              <div class="row">
+                <div class="col-md-4 column">
+                  <h3>Компания</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="{% url 'index' %}">Главная</a></li>
+                    <li><a href="{% url 'about' %}">О нас</a></li>
+                    <li><a href="{% url 'services' %}">Услуги</a></li>
+                    <li><a href="{% url 'blog' %}">Блог</a></li>
+                    <li><a href="{% url 'contact' %}">Контакты</a></li>
+                  </ul>
+                </div>
+                <div class="col-md-4 column mt-md-0 mt-4">
+                  <h3>Полезные ссылки</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="{% url 'services' %}">Направления</a></li>
+                    <li><a href="#">Наши ветки</a></li>
+                    <li><a href="#">Медиа</a></li>
+                    <li><a href="{% url 'about' %}">О нашей компании</a></li>
+                    <li><a href="{% url 'pricing' %}">Наш прайс лист</a></li>
+                  </ul>
+                </div>
+                <div class="col-md-4 column mt-md-0 mt-4">
+                  <h3>Наши услуги</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Наша команда</a></li>
+                    <li><a href="{% url 'services' %}">Услуги</a></li>
+                    <li><a href="{% url 'landing-single' %}">Лендинговая страница</a></li>
+                    <li><a href="#">Наши гайды</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-12 column pl-lg-5 column4 mt-lg-0 mt-5">
+              <h3>Газета</h3>
+              <div class="end-column">
+                <h4>Получайте последние новости и предложения</h4>
+                <form action="{% url 'sendemail' %}" class="subscribe" method="post">
+                  {% csrf_token %}
+                  <input type="email" name="email" placeholder="Почта" required="">
+                  <button type="submit">Вперед</button>
+                </form>
+                <p>Подпишитесь на наши последние новости и статьи. Мы не будем рассылать вам спам</p>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex below-section justify-content-between align-items-center pt-4 mt-5">
+            <div class="columns text-lg-left text-center">
+              <p>&copy; Все права защищены<a href="https://w3layouts.com/" target="_blank">
+
+              </p>
+            </div>
+            <div class="columns-2 mt-lg-0 mt-3">
+              <ul class="social">
+                <li><a href="https://www.facebook.com/"><span class="fa fa-facebook" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://www.linkedin.com/"><span class="fa fa-linkedin" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://twitter.com/"><span class="fa fa-twitter" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://www.google.com/"><span class="fa fa-google-plus" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://github.com/"><span class="fa fa-github" aria-hidden="true"></span></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- move top -->
+      <button onclick="topFunction()" id="movetop" title="Go to top">
+        <span class="fa fa-angle-up"></span>
+      </button>
+      <script>
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () {
+          scrollFunction()
+        };
+
+        function scrollFunction() {
+          if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("movetop").style.display = "block";
+          } else {
+            document.getElementById("movetop").style.display = "none";
+          }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
+        }
+      </script>
+      <!-- //move top -->
+      <script>
+        $(function () {
+          $('.navbar-toggler').click(function () {
+            $('body').toggleClass('noscroll');
+          })
+        });
+      </script>
+    </section>
+    <!-- //footer -->
+  </footer>
+  <!-- Template JavaScript -->
+  <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'assets/js/theme-change.js' %}"></script>
+  <!-- stats number counter-->
+  <script src="{% static 'assets/js/jquery.waypoints.min.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.countup.js' %}"></script>
+  <script>
+    $('.counter').countUp();
+  </script>
+  <!-- //stats number counter -->
+  <!--/MENU-JS-->
+  <script>
+    $(window).on("scroll", function () {
+      var scroll = $(window).scrollTop();
+
+      if (scroll >= 80) {
+        $("#site-header").addClass("nav-fixed");
+      } else {
+        $("#site-header").removeClass("nav-fixed");
+      }
+    });
+
+    //Main navigation Active Class Add Remove
+    $(".navbar-toggler").on("click", function () {
+      $("header").toggleClass("active");
+    });
+    $(document).on("ready", function () {
+      if ($(window).width() > 991) {
+        $("header").removeClass("active");
+      }
+      $(window).on("resize", function () {
+        if ($(window).width() > 991) {
+          $("header").removeClass("active");
+        }
+      });
+    });
+  </script>
+  <!--//MENU-JS-->
+
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+/venv
+**/migrations/**
+!**/migrations/__init__.py
+/db.sqlite3
+ /main/__pycache__/settings.cpython-312.pyc

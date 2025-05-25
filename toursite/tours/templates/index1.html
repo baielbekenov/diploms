@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map Example</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3bbNnuSQUlRymM3Ry-L6tX78IDdLSCUY&callback=initMap" async defer></script>
+    <script>
+        function initMap() {
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 4,
+                center: {lat: -25.363, lng: 131.044}
+            });
+
+            {% for destination in destinations %}
+            var marker = new google.maps.Marker({
+                position: {lat: {{ destination.position.latitude }}, lng: {{ destination.position.longitude }}},
+                map: map,
+                title: '{{ destination.name }}'
+            });
+            {% endfor %}
+        }
+        function initMap() {
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 4,
+                center: {lat: -25.363, lng: 131.044}
+            });
+
+            {% for destination in destinations %}
+            var marker = new google.maps.Marker({
+                position: {lat: {{ destination.position.latitude }}, lng: {{ destination.position.longitude }}},
+                map: map,
+                title: '{{ destination.name }}'
+            });
+            {% endfor %}
+        }
+    </script>
+</head>
+<body>
+    <div id="map" style="height: 400px; width: 100%;"></div>
+</body>
+</html>

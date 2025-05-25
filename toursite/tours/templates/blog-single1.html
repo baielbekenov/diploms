@@ -1,0 +1,377 @@
+<!doctype html>
+{% load static %}
+<html lang="zxx">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>{{ destination.name }}</title>
+  <!-- google fonts -->
+  <link href="//fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="//fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <!-- google fonts -->
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/style-liberty.css' %}">
+  <!-- Template CSS -->
+</head>
+
+<body>
+  <!--header-->
+  <header id="site-header" class="fixed-top">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg stroke">
+        <h1><a class="navbar-brand mr-lg-5" href="{% url 'index' %}">
+            Traversal
+          </a></h1>
+        <!-- if logo is image enable this
+      <a class="navbar-brand" href="#index.html">
+          <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
+      </a> -->
+        <button class="navbar-toggler  collapsed bg-gradient" type="button" data-toggle="collapse"
+          data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+          <span class="navbar-toggler-icon fa icon-close fa-times"></span>
+          </span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'index' %}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">О нас</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'services' %}">Направления</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'pricing' %}">Прайс лист</a>
+            </li>
+            <li class="nav-item dropdown active">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Блог<span class="fa fa-angle-down"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                <a class="dropdown-item" href="{% url 'blog' %}">Блоги</a>
+                <a class="dropdown-item" href="{% url 'index' %}">Лэндинговая страница</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'contact' %}">Контакты</a>
+            </li>
+
+          </ul>
+        </div>
+        <div class="d-lg-block d-none">
+          <a href="{% url 'contact' %}" class="btn btn-style btn-secondary">Связаться</a>
+        </div>
+        <!-- toggle switch for light and dark theme -->
+        <div class="mobile-position">
+          <nav class="navigation">
+            <div class="theme-switch-wrapper">
+              <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox">
+                <div class="mode-container">
+                  <i class="gg-sun"></i>
+                  <i class="gg-moon"></i>
+                </div>
+              </label>
+            </div>
+          </nav>
+        </div>
+        <!-- //toggle switch for light and dark theme -->
+      </nav>
+    </div>
+  </header>
+  <!-- //header -->
+  <!-- about breadcrumb -->
+  <section class="w3l-about-breadcrumb text-left">
+    <div class="breadcrumb-bg breadcrumb-bg-about py-sm-5 py-4">
+      <div class="container">
+        <h2 class="title">Страница</h2>
+        <ul class="breadcrumbs-custom-path mt-2">
+          <li><a href="{% url 'index' %}">Главная</a></li>
+          <li class="active"><span class="fa fa-arrow-right mx-2" aria-hidden="true"></span> {{ destination.name }} </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- //about breadcrumb -->
+  <!--/blog-->
+  <div class="py-5 w3l-homeblock1 text-center">
+</div>
+<section class="blog-post-main w3l-homeblock1">
+    <!--/blog-post-->
+    <div class="blog-content-inf pb-5">
+        <div class="container pb-lg-4">
+            <div class="single-post-image">
+                <div class="post-content">
+                    <img src="{{ destination.image.url }}" class="radius-image img-fluid mb-5" alt="" />
+                </div>
+            </div>
+            <div class="single-post-content">
+                <p class="alphabet mb-4"><span class="big-letter">А</span>{{ destination.description }}</p>
+
+                <h3 class="blog-desc-big m-0 mb-4">{{ destination.name }}</h3>
+                <div class="sing-post-thumb mb-5 row pt-3">
+                </div>
+                <h3 class="blog-desc-big m-0 mb-lg-4 mb-3">Цена</h3>
+                <p class="mb-4">{{ destination.price }} сом</p>
+
+                <h3 class="blog-desc-big m-0 mt-5 mb-4">Длительность</h3>
+                <p class="mb-4">{{ destination.duration }}</p>
+
+                <div class="d-grid left-right mt-5 pb-md-5">
+                    <div class="buttons-singles tags">
+                        <h4>Тэги :</h4>
+                        <a href="#blog-tag">Путешествия</a>
+                        <a href="#blog-tag">Культура</a>
+                        <a href="#blog-tag">Отель</a>
+                        <a href="#blog-tag">Еда</a>
+                    </div>
+                    <div class="buttons-singles">
+                        <h4>Поделиться :</h4>
+                        <a href="#blog-share"><span class="fa fa-facebook" aria-hidden="true"></span></a>
+                        <a href="#blog-share"><span class="fa fa-twitter" aria-hidden="true"></span></a>
+                        <a href="#blog-share"><span class="fa fa-google-plus" aria-hidden="true"></span></a>
+                        <a href="#blog-share"><span class="fa fa-pinterest-p" aria-hidden=" true"></span></a>
+                    </div>
+                </div>
+
+                <!--//author-card-->
+                <div class="map mt-5 pt-md-5">
+                <h5>Map</h5>
+                <div id="map" style="height: 400px;"></div>
+                </div>
+                <script>
+                    function initMap() {
+                        const map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 14,
+                            center: {lat: {{ destination.position.latitude }}, lng: {{ destination.position.longitude }}}
+                        });
+
+                        var marker = new google.maps.Marker({
+                            position: {lat: {{ destination.position.latitude }}, lng: {{ destination.position.longitude }}},
+                            map: map,
+                            title: '{{ destination.name }}'
+                        });
+                    }
+                </script>
+                <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqejJZsHka33oHyhcm75H8Y98zYj9joJQ&callback=initMap" async defer>
+                </script>
+
+
+                <div class="comments mt-5">
+                    {% if comments %}
+                    <h4 class="side-title ">Комментарии ({{ comments|length }})</h4>
+                    {% for comment in comments %}
+                        <div class="media mt-4">
+                            <div class="img-circle">
+                                <img src="{% static 'assets/images/c1.JPG' %}" class="img-fluid" alt="...">
+                            </div>
+                            <div class="media-body">
+                                <ul class="time-rply mb-2">
+                                    <li>
+                                        <a href="#URL" class="name mt-0 mb-2 d-block">{{ comment.name }}</a>
+                                        {{ comment.created_at }}
+                                    </li>
+                                    <li class="reply-last">
+                                        <a href="#reply" class="reply">Ответить</a>
+                                    </li>
+                                </ul>
+                                <p>{{ comment.comment }}</p>  <!-- Используйте comment.comment, если текст комментария хранится в поле comment -->
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>Комментариев пока нет.</p>
+                    {% endfor %}
+                {% else %}
+                    <p>Комментариев пока нет.</p>
+                {% endif %}
+                </div>
+
+                <div class="leave-comment-form mt-5" id="reply">
+                    <h4 class="side-title mb-2">Оставить комментарий</h4>
+                    <p class="mb-4">Ваша почта не будет опуюликована. Необходимые поля отмечены *
+                    </p>
+                    <form action="{% url 'leavecomment' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <textarea name="comment" class="form-control" placeholder="Ваш комментарий*" required=""
+                                spellcheck="false"></textarea>
+                        </div>
+                        <input type="hidden" name="destination_id" value="{{ destination.id }}">
+                        <div class="input-grids row">
+                            <div class="form-group col-lg-6">
+                                <input type="text" name="name" class="form-control" placeholder="Ваше имя*" required="">
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <input type="email" name="email" class="form-control" placeholder="Почта*" required="">
+                            </div>
+                        </div>
+                        <div class="submit text-right">
+                            <button class="btn btn-style btn-primary">Оставить комментарий</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--//blog-post-->
+</section>
+
+  <!--/w3l-footer-29-main-->
+  <footer>
+    <!-- footer -->
+    <section class="w3l-footer">
+      <div class="w3l-footer-16-main py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 column">
+              <div class="row">
+                <div class="col-md-4 column">
+                  <h3>Компания</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="{% url 'index' %}">Главная</a></li>
+                    <li><a href="{% url 'about' %}">О нас</a></li>
+                    <li><a href="{% url 'services' %}">Услуги</a></li>
+                    <li><a href="{% url 'blog' %}">Блог</a></li>
+                    <li><a href="{% url 'contact' %}">Контакты</a></li>
+                  </ul>
+                </div>
+                <div class="col-md-4 column mt-md-0 mt-4">
+                  <h3>Полезные ссылки</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="{% url 'services' %}">Направления</a></li>
+                    <li><a href="#">Наши ветки</a></li>
+                    <li><a href="#">Медиа</a></li>
+                    <li><a href="{% url 'about' %}">О нашей компании</a></li>
+                    <li><a href="{% url 'pricing' %}">Наш прайс лист</a></li>
+                  </ul>
+                </div>
+                <div class="col-md-4 column mt-md-0 mt-4">
+                  <h3>Наши услуги</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Наша команда</a></li>
+                    <li><a href="{% url 'services' %}">Услуги</a></li>
+                    <li><a href="{% url 'landing-single' %}">Лендинговая страница</a></li>
+                    <li><a href="#">Наши гайды</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-12 column pl-lg-5 column4 mt-lg-0 mt-5">
+              <h3>Газета</h3>
+              <div class="end-column">
+                <h4>Получайте последние новости и предложения</h4>
+                <form action="{% url 'sendemail' %}" class="subscribe" method="post">
+                  {% csrf_token %}
+                  <input type="email" name="email" placeholder="Почта" required="">
+                  <button type="submit">Вперед</button>
+                </form>
+                <p>Подпишитесь на наши последние новости и статьи. Мы не будем рассылать вам спам</p>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex below-section justify-content-between align-items-center pt-4 mt-5">
+            <div class="columns text-lg-left text-center">
+              <p>&copy; Все права защищены<a href="https://w3layouts.com/" target="_blank">
+
+              </p>
+            </div>
+            <div class="columns-2 mt-lg-0 mt-3">
+              <ul class="social">
+                <li><a href="https://www.facebook.com/"><span class="fa fa-facebook" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://www.linkedin.com/"><span class="fa fa-linkedin" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://twitter.com/"><span class="fa fa-twitter" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://www.google.com/"><span class="fa fa-google-plus" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://github.com/"><span class="fa fa-github" aria-hidden="true"></span></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- move top -->
+      <button onclick="topFunction()" id="movetop" title="Go to top">
+        <span class="fa fa-angle-up"></span>
+      </button>
+      <script>
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () {
+          scrollFunction()
+        };
+
+        function scrollFunction() {
+          if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("movetop").style.display = "block";
+          } else {
+            document.getElementById("movetop").style.display = "none";
+          }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
+        }
+      </script>
+      <!-- //move top -->
+      <script>
+        $(function () {
+          $('.navbar-toggler').click(function () {
+            $('body').toggleClass('noscroll');
+          })
+        });
+      </script>
+    </section>
+    <!-- //footer -->
+  </footer>
+
+  <!-- Template JavaScript -->
+  <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'assets/js/theme-change.js' %}"></script>
+  <!--/MENU-JS-->
+  <script>
+    $(window).on("scroll", function () {
+      var scroll = $(window).scrollTop();
+
+      if (scroll >= 80) {
+        $("#site-header").addClass("nav-fixed");
+      } else {
+        $("#site-header").removeClass("nav-fixed");
+      }
+    });
+
+    //Main navigation Active Class Add Remove
+    $(".navbar-toggler").on("click", function () {
+      $("header").toggleClass("active");
+    });
+    $(document).on("ready", function () {
+      if ($(window).width() > 991) {
+        $("header").removeClass("active");
+      }
+      $(window).on("resize", function () {
+        if ($(window).width() > 991) {
+          $("header").removeClass("active");
+        }
+      });
+    });
+  </script>
+  <!--//MENU-JS-->
+
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+</body>
+
+</html>

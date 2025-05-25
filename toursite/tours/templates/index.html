@@ -1,0 +1,536 @@
+<!doctype html>
+{% load static %}
+<html lang="zxx">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Traversal | Главная </title>
+  <!-- google fonts -->
+  <link href="//fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="//fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <!-- google fonts -->
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/style-liberty.css' %}">
+  <!-- Template CSS -->
+</head>
+
+<body>
+  <!--header-->
+  <header id="site-header" class="fixed-top">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg stroke">
+        <h1><a class="navbar-brand mr-lg-5" href="{% url 'index' %}">
+            Traversal
+          </a></h1>
+        <!-- if logo is image enable this   
+      <a class="navbar-brand" href="#index.html">
+          <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
+      </a> -->
+        <button class="navbar-toggler  collapsed bg-gradient" type="button" data-toggle="collapse"
+          data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+          <span class="navbar-toggler-icon fa icon-close fa-times"></span>
+          </span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'index' %}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">О нас</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'services' %}">Направления</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'pricing' %}">Прайс лист</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Блог<span class="fa fa-angle-down"></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                <a class="dropdown-item" href="{% url 'blog' %}">Блоги</a>
+                <a class="dropdown-item" href="{% url 'index' %}">Лэндинговая страница</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'contact' %}">Контакты</a>
+            </li>
+
+          </ul>
+        </div>
+        <div class="d-lg-block d-none">
+          <a href="{% url 'contact' %}" class="btn btn-style btn-secondary">Связаться</a>
+        </div>
+        <!-- toggle switch for light and dark theme -->
+        <div class="mobile-position">
+          <nav class="navigation">
+            <div class="theme-switch-wrapper">
+              <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox">
+                <div class="mode-container">
+                  <i class="gg-sun"></i>
+                  <i class="gg-moon"></i>
+                </div>
+              </label>
+            </div>
+          </nav>
+        </div>
+        <!-- //toggle switch for light and dark theme -->
+      </nav>
+    </div>
+  </header>
+  <!-- //header -->
+  <!--banner-slider-->
+  <!-- main-slider -->
+  <section class="w3l-main-slider" id="home">
+    <div class="banner-content">
+      <div id="demo-1"
+        data-zs-src='["{% static 'assets/images/banner1.JPG' %}", "{% static 'assets/images/banner2.JPG' %}", "{% static 'assets/images/banner3.JPG' %}", "{% static 'assets/images/banner4.JPG' %}"]'
+        data-zs-overlay="dots">
+        <div class="demo-inner-content">
+          <div class="container">
+            <div class="banner-infhny">
+              <h3>Вам не нужно далеко ходить, чтобы найти то, что важно.</h3>
+              <h6 class="mb-3">Откройте для себя следующее приключение</h6>
+              <div class="flex-wrap search-wthree-field mt-md-5 mt-4">
+                <form action="{% url 'search_tours' %}" method="get" class="booking-form">
+                  <div class="row book-form">
+                    <div class="form-input col-md-4 mt-md-0 mt-3">
+
+                      <select name="destination_id" class="selectpicker">
+                        <option value="">Ничего</option>
+                        {% for i in destinations %}
+                        <option value="{{ i.id }}">{{ i.name }}</option>
+                        {% endfor %}
+                      </select>
+
+                    </div>
+                    <div class="form-input col-md-4 mt-md-0 mt-3">
+
+                      <input type="date" name="date" placeholder="Date" required="">
+                    </div>
+                    <div class="bottom-btn col-md-4 mt-md-0 mt-3">
+                      <button class="btn btn-style btn-secondary"><span class="fa fa-search mr-3"
+                          aria-hidden="true"></span> Искать</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /main-slider -->
+  <!-- //banner-slider-->
+
+  <!--/grids-->
+  <section class="w3l-grids-3 py-5">
+    <div class="container py-md-5">
+      <div class="title-content text-left mb-lg-5 mb-4">
+        <h6 class="sub-title">Посетить</h6>
+        <h3 class="hny-title">Популярные направления</h3>
+      </div>
+      <div class="row bottom-ab-grids">
+  <!--/row-grids-->
+        {% for i in destinations %}
+        <div class="col-lg-6 subject-card mt-lg-0 mt-4">
+          <div class="subject-card-header p-4">
+            <a href="{% url 'blog-single1' i.pk %}" class="card_title p-lg-4d-block">
+              <div class="row align-items-center">
+                <div class="col-sm-5 subject-img">
+                  <img src="{{ i.image.url }}" class="img-fluid" alt="">
+                </div>
+                <div class="col-sm-7 subject-content mt-sm-0 mt-4">
+                  <h4>{{ i.name }}</h4>
+                  <p>{{ i.duration }}</p>
+                  <div class="dst-btm">
+                    <h6 class=""> начинается с </h6>
+                    <span>{{ i.price }} сом</span>
+                  </div>
+                  <p class="sub-para">Для одного человека расчитано</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+          <!--//row-grids-->
+      </div>
+    </div>
+  </section>
+  <!--//grids-->
+  <!-- stats -->
+  <section class="w3l-stats py-5" id="stats">
+    <div class="gallery-inner container py-lg-0 py-3">
+      <div class="row stats-con pb-lg-3">
+        <div class="col-lg-3 col-6 stats_info counter_grid">
+          <p class="counter">730</p>
+          <h4>Ветви</h4>
+        </div>
+        <div class="col-lg-3 col-6 stats_info counter_grid1">
+          <p class="counter">1680</p>
+          <h4>Путеводители</h4>
+        </div>
+        <div class="col-lg-3 col-6 stats_info counter_grid mt-lg-0 mt-5">
+          <p class="counter">812</p>
+          <h4>Довольные клиенты</h4>
+        </div>
+        <div class="col-lg-3 col-6 stats_info counter_grid2 mt-lg-0 mt-5">
+          <p class="counter">990</p>
+          <h4>Награды</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- //stats -->
+  <!--/-->
+  <div class="best-rooms py-5">
+    <div class="container py-md-5">
+        <div class="ban-content-inf row">
+            <div class="maghny-gd-1 col-lg-6">
+              <div class="maghny-grid">
+                <figure class="effect-lily border-radius  m-0">
+                    <img class="img-fluid" src="{% static 'assets/images/helicopter.JPG' %}" alt="" />
+                    <figcaption>
+                        <div>
+                            <h4>3 дня, 4 ночей</h4>
+                            <p>от 20000 сомов </p>
+                            <p>Экспедиция на вертолете </p>
+                        </div>
+
+                    </figcaption>
+                </figure>
+            </div>
+            </div>
+            <div class="maghny-gd-1 col-lg-6 mt-lg-0 mt-4">
+                <div class="row">
+                    <div class="maghny-gd-1 col-6">
+                        <div class="maghny-grid">
+                            <figure class="effect-lily border-radius">
+                                <img class="img-fluid" src="{% static 'assets/images/IMG_1223.JPG' %}" alt="" />
+                                <figcaption>
+                                    <div>
+                                        <h4>3 дня, 4 ночей</h4>
+                                        <p>от 7500 сомов </p>
+                                        <p>Каракол </p>
+                                    </div>
+
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="maghny-gd-1 col-6">
+                        <div class="maghny-grid">
+                            <figure class="effect-lily border-radius">
+                                <img class="img-fluid" src="{% static 'assets/images/IMG_8510.JPG' %}" alt="" />
+                                <figcaption>
+                                    <div>
+                                        <h4>3 дня, 4 ночей</h4>
+                                        <p>от 12500 сомов </p>
+                                        <p>Подножия гор </p>
+                                    </div>
+
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="maghny-gd-1 col-6 mt-4">
+                        <div class="maghny-grid">
+                            <figure class="effect-lily border-radius">
+                                <img class="img-fluid" src="{% static 'assets/images/ruhordo2.JPG' %}" alt="" />
+                                <figcaption>
+                                    <div>
+                                        <h4>3 дня, 4 ночей</h4>
+                                        <p>от 6500 сомов </p>
+                                        <p>Чоплон Ата </p>
+                                    </div>
+
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="maghny-gd-1 col-6 mt-4">
+                        <div class="maghny-grid">
+                            <figure class="effect-lily border-radius">
+                                <img class="img-fluid" src="{% static 'assets/images/jeep.JPG' %}" alt="" />
+                                <figcaption>
+                                    <div>
+                                        <h4>3 дня, 4 ночей</h4>
+                                        <p>от 10000 сомов </p>
+                                        <p>Горы Кыргызстана </p>
+                                    </div>
+
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  <!-- //stats -->
+  <!--/w3l-bottom-->
+  <section class="w3l-bottom py-5">
+    <div class="container py-md-4 py-3 text-center">
+      <div class="row my-lg-4 mt-4">
+        <div class="col-lg-9 col-md-10 ml-auto">
+          <div class="bottom-info ml-auto">
+            <div class="header-section text-left">
+              <h3 class="hny-title two">Путешествия делают человека мудрее, но менее счастливым.</h3>
+              <p class="mt-3 pr-lg-5">
+Путешествия расширяют горизонты и обогащают нас новыми впечатлениями и знаниями. Они учат нас ценить разнообразие культур и традиций, встречая на своём пути самые разные образы жизни и мировоззрения. Однако, путешествия могут также стать источником ностальгии и меланхолии, ведь далёкие странствия часто заставляют нас оставлять за собой привычный уклад жизни и близких людей.
+                </p>
+              <a href="{% url 'about' %}" class="btn btn-style btn-secondary mt-5">Читать дальше</a>
+            </div>
+           
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--//w3l-bottom-->
+  <!-- testimonials -->
+  <section class="w3l-clients" id="clients">
+    <!-- /grids -->
+    <div class="cusrtomer-layout py-5">
+      <div class="container py-lg-4 py-md-3 pb-lg-0">
+        <div class="heading text-center mx-auto">
+          <h6 class="sub-title text-center">Что говорят наши клиенты</h6>
+          <h3 class="hny-title mb-md-5 mb-4">наши клиенты говорят сами</h3>
+        </div>
+        <!-- /grids -->
+        <div class="testimonial-width">
+          <div id="owl-demo1" class="owl-two owl-carousel owl-theme">
+            {% for i in comments %}
+            <div class="item">
+              <div class="testimonial-content">
+                <div class="testimonial">
+                  <blockquote>
+                    <span class="fa fa-quote-left" aria-hidden="true"></span>
+                    {{ i.comment }}
+                  </blockquote>
+                  <div class="testi-des">
+                    <div class="test-img"><img src="{% static 'assets/images/c1.JPG' %}" class="img-fluid" alt="client-img">
+                    </div>
+                    <div class="peopl align-self">
+                      <h3>{{ i.name }}</h3>
+                      <p class="indentity">Example City</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+      <!-- /grids -->
+    </div>
+    <!-- //grids -->
+  </section>
+  <!-- //testimonials -->
+
+  <!--/w3l-footer-29-main-->
+  <footer>
+    <!-- footer -->
+    <section class="w3l-footer">
+      <div class="w3l-footer-16-main py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 column">
+              <div class="row">
+                <div class="col-md-4 column">
+                  <h3>Компания</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="{% url 'index' %}">Главная</a></li>
+                    <li><a href="{% url 'about' %}">О нас</a></li>
+                    <li><a href="{% url 'services' %}">Услуги</a></li>
+                    <li><a href="{% url 'blog' %}">Блог</a></li>
+                    <li><a href="{% url 'contact' %}">Контакты</a></li>
+                  </ul>
+                </div>
+                <div class="col-md-4 column mt-md-0 mt-4">
+                  <h3>Полезные ссылки</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="{% url 'services' %}">Направления</a></li>
+                    <li><a href="#">Наши ветки</a></li>
+                    <li><a href="#">Медиа</a></li>
+                    <li><a href="{% url 'about' %}">О нашей компании</a></li>
+                    <li><a href="{% url 'pricing' %}">Наш прайс лист</a></li>
+                  </ul>
+                </div>
+                <div class="col-md-4 column mt-md-0 mt-4">
+                  <h3>Наши услуги</h3>
+                  <ul class="footer-gd-16">
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Наша команда</a></li>
+                    <li><a href="{% url 'services' %}">Услуги</a></li>
+                    <li><a href="{% url 'landing-single' %}">Лендинговая страница</a></li>
+                    <li><a href="#">Наши гайды</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-12 column pl-lg-5 column4 mt-lg-0 mt-5">
+              <h3>Газета</h3>
+              <div class="end-column">
+                <h4>Получайте последние новости и предложения</h4>
+                <form action="{% url 'sendemail' %}" class="subscribe" method="post">
+                  {% csrf_token %}
+                  <input type="email" name="email" placeholder="Почта" required="">
+                  <button type="submit">Вперед</button>
+                </form>
+                <p>Подпишитесь на наши последние новости и статьи. Мы не будем рассылать вам спам</p>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex below-section justify-content-between align-items-center pt-4 mt-5">
+            <div class="columns text-lg-left text-center">
+              <p>&copy; Все права защищены<a href="https://w3layouts.com/" target="_blank">
+
+              </p>
+            </div>
+            <div class="columns-2 mt-lg-0 mt-3">
+              <ul class="social">
+                <li><a href="https://www.facebook.com/"><span class="fa fa-facebook" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://www.linkedin.com/"><span class="fa fa-linkedin" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://twitter.com/"><span class="fa fa-twitter" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://www.google.com/"><span class="fa fa-google-plus" aria-hidden="true"></span></a>
+                </li>
+                <li><a href="https://github.com/"><span class="fa fa-github" aria-hidden="true"></span></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- move top -->
+      <button onclick="topFunction()" id="movetop" title="Go to top">
+        <span class="fa fa-angle-up"></span>
+      </button>
+      <script>
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () {
+          scrollFunction()
+        };
+
+        function scrollFunction() {
+          if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("movetop").style.display = "block";
+          } else {
+            document.getElementById("movetop").style.display = "none";
+          }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
+        }
+      </script>
+      <!-- //move top -->
+      <script>
+        $(function () {
+          $('.navbar-toggler').click(function () {
+            $('body').toggleClass('noscroll');
+          })
+        });
+      </script>
+    </section>
+    <!-- //footer -->
+  </footer>
+  <!-- Template JavaScript -->
+  <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'assets/js/theme-change.js' %}"></script>
+  <!--/slider-js-->
+  <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+  <script src="{% static 'assets/js/modernizr-2.6.2.min.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.zoomslider.min.js' %}"></script>
+  <!--//slider-js-->
+  <script src="{% static 'assets/js/owl.carousel.js' %}"></script>
+  <!-- script for tesimonials carousel slider -->
+  <script>
+    $(document).ready(function () {
+      $("#owl-demo1").owlCarousel({
+        loop: true,
+        margin: 20,
+        nav: false,
+        responsiveClass: true,
+        responsive: {
+          0: {
+            items: 1,
+            nav: false
+          },
+          736: {
+            items: 1,
+            nav: false
+          },
+          1000: {
+            items: 1,
+            nav: false,
+            loop: true
+          }
+        }
+      })
+    })
+  </script>
+  <!-- //script for tesimonials carousel slider -->
+  <!-- stats number counter-->
+  <script src="{% static 'assets/js/jquery.waypoints.min.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.countup.js' %}"></script>
+  <script>
+    $('.counter').countUp();
+  </script>
+  <!-- //stats number counter -->
+  <!--/MENU-JS-->
+  <script>
+    $(window).on("scroll", function () {
+      var scroll = $(window).scrollTop();
+
+      if (scroll >= 80) {
+        $("#site-header").addClass("nav-fixed");
+      } else {
+        $("#site-header").removeClass("nav-fixed");
+      }
+    });
+
+    //Main navigation Active Class Add Remove
+    $(".navbar-toggler").on("click", function () {
+      $("header").toggleClass("active");
+    });
+    $(document).on("ready", function () {
+      if ($(window).width() > 991) {
+        $("header").removeClass("active");
+      }
+      $(window).on("resize", function () {
+        if ($(window).width() > 991) {
+          $("header").removeClass("active");
+        }
+      });
+    });
+  </script>
+  <!--//MENU-JS-->
+
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+</body>
+
+</html>
