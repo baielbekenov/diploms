@@ -22,3 +22,14 @@ services:
       - ./elective/db.sqlite3:/app/db.sqlite3
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:8020
+
+  logist:
+    build:
+      context: ./logist
+    container_name: logist
+    ports:
+      - "8030:8030"
+    volumes:
+      - ./logist/db.sqlite3:/app/db.sqlite3
+    working_dir: /app
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:8030
