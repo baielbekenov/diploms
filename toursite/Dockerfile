@@ -25,7 +25,6 @@ RUN pip install -r requirements.txt
 # Копируем остальные файлы проекта
 COPY . .
 
-RUN python manage.py collectstatic --noinput
 
 EXPOSE 4902
 
