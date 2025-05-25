@@ -27,7 +27,7 @@ COPY . .
 
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 8010
+EXPOSE 7357
 
 # Команда по умолчанию (можно переопределить в docker-compose)
-CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:8010"]
+CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:7357"]

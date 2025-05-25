@@ -9,6 +9,11 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    texlive-xetex \
+    texlive-fonts-recommended \
+    texlive-latex-recommended \
+    texlive-latex-extra \
+    fonts-dejavu \
     && rm -rf /var/lib/apt/lists/*
 
 # Создание рабочей директории
@@ -27,7 +32,7 @@ COPY . .
 
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 6295
+EXPOSE 3712
 
 # Команда по умолчанию (можно переопределить в docker-compose)
-CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:6295"]
+CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:3712"]

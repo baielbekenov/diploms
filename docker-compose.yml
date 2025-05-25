@@ -6,41 +6,52 @@ services:
       context: ./konditer
     container_name: konditer
     ports:
-      - "8010:8010"
+      - "7357:7357"
     volumes:
       - ./konditer/db.sqlite3:/app/db.sqlite3
     working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:8010
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:7357
 
   elective:
     build:
       context: ./elective
     container_name: elective
     ports:
-      - "8020:8020"
+      - "6295:6295"
     volumes:
       - ./elective/db.sqlite3:/app/db.sqlite3
     working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:8020
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:6295
 
   logist:
     build:
       context: ./logist
     container_name: logist
     ports:
-      - "8030:8030"
+      - "5927:5927"
     volumes:
       - ./logist/db.sqlite3:/app/db.sqlite3
     working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:8030
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:5927
 
   toursite:
     build:
       context: ./toursite
     container_name: toursite
     ports:
-      - "8040:8040"
+      - "4902:4902"
     volumes:
       - ./toursite/db.sqlite3:/app/db.sqlite3
     working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:8040
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:4902
+
+  latex:
+    build:
+      context: ./latex
+    container_name: latex
+    ports:
+      - "3712:3712"
+    volumes:
+      - ./latex/db.sqlite3:/app/db.sqlite3
+    working_dir: /app
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:3712
