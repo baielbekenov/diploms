@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_star.apps.AdminStarConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'apps.logistika',
     'apps.user',
 ]
+
+ADMIN2_THEME_DIRECTORY = "djadmin2theme_bootstrap3"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
