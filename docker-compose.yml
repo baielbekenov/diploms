@@ -18,8 +18,8 @@ services:
     container_name: elective
     ports:
       - "6295:6295"
-    volumes:
-      - ./elective/db.sqlite3:/app/db.sqlite3
+#    volumes:
+#      - ./elective/db.sqlite3:/app/db.sqlite3
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:6295
 
@@ -29,8 +29,8 @@ services:
     container_name: logist
     ports:
       - "5927:5927"
-    volumes:
-      - ./logist/db.sqlite3:/app/db.sqlite3
+#    volumes:
+#      - ./logist/db.sqlite3:/app/db.sqlite3
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:5927
 
@@ -40,8 +40,8 @@ services:
     container_name: toursite
     ports:
       - "4902:4902"
-    volumes:
-      - ./toursite/db.sqlite3:/app/db.sqlite3
+#    volumes:
+#      - ./toursite/db.sqlite3:/app/db.sqlite3
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:4902
 
@@ -51,7 +51,7 @@ services:
     container_name: latex
     ports:
       - "3712:3712"
-    volumes:
-      - ./latex/db.sqlite3:/app/db.sqlite3
+#    volumes:
+#      - ./latex/db.sqlite3:/app/db.sqlite3
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:3712
