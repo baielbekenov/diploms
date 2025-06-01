@@ -21,8 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('superpanel8/', admin.site.urls),
-    path('', include('admin_berry.urls')),
     path('', include('tours.urls')),
+    path('', include('admin_berry.urls')),
     path('set_language/', include('django.conf.urls.i18n')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
