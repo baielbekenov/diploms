@@ -7,8 +7,8 @@ services:
     container_name: konditer
     ports:
       - "7357:7357"
-    volumes:
-      - ./konditer/db.sqlite3:/app/db.sqlite3
+#    volumes:
+#      - ./konditer/db.sqlite3:/app/db.sqlite3
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:7357
 
