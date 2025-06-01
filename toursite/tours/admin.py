@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import Tour, Destination, Customer, Comment, Contact, Blog, Book
 
-
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'destination', 'date')

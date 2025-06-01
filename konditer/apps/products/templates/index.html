@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sweet Delights — Кондитерская</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fffaf9;
+      color: #333;
+    }
+    header {
+      background-color: #f8c6d8;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 3em;
+    }
+    .cart {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background-color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      font-weight: bold;
+    }
+    nav {
+      background-color: #ffe4ec;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+    nav button {
+      font-size: 1.2em;
+      background-color: #d6336c;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .catalog {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      padding: 40px 20px;
+    }
+    .item {
+      background-color: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 300px;
+      padding: 20px;
+      text-align: center;
+    }
+    .item img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .item h3 {
+      font-size: 1.5em;
+      margin: 15px 0 10px;
+    }
+    .item p {
+      font-size: 1.1em;
+      color: #777;
+    }
+    .item button {
+      margin-top: 10px;
+      background-color: #d6336c;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Sweet Delights</h1>
+    <div class="cart">🛒 Корзина: <span id="cart-count">0</span></div>
+  </header>
+
+  <nav>
+    {% for i in category %}
+    <button onclick="filterCategory('{{ i.slug }}')">{{ i.name }}</button>
+    {% endfor %}
+<!--    <button onclick="filterCategory('cakes')">Торты</button>-->
+<!--    <button onclick="filterCategory('cupcakes')">Капкейки</button>-->
+<!--    <button onclick="filterCategory('macarons')">Макаронс</button>-->
+  </nav>
+
+  <section class="catalog" id="catalog">
+    {% for i in product %}
+    <div class="item {{ i.category_id.slug }}">
+      <img src="{{ i.productimages.first.image.url }}" alt="Торт 1">
+      <h3>{{ i.name }}</h3>
+      <p>{{ i.price }}</p>
+      <button onclick="addToCart()">Добавить в корзину</button>
+    </div>
+    {% endfor %}
+<!--    <div class="item cupcakes">-->
+<!--      <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587" alt="Капкейки">-->
+<!--      <h3>Капкейки шоколад</h3>-->
+<!--      <p>450 сом</p>-->
+<!--      <button onclick="addToCart()">Добавить в корзину</button>-->
+<!--    </div>-->
+<!--    <div class="item macarons">-->
+<!--      <img src="https://images.unsplash.com/photo-1606813902911-07d5eb1b20cc" alt="Макаронс">-->
+<!--      <h3>Макаронс ассорти</h3>-->
+<!--      <p>500 сом</p>-->
+<!--      <button onclick="addToCart()">Добавить в корзину</button>-->
+<!--    </div>-->
+    <!-- Добавь больше товаров по аналогии -->
+  </section>
+
+  <script>
+    let cartCount = 0;
+    function addToCart() {
+      cartCount++;
+      document.getElementById('cart-count').innerText = cartCount;
+    }
+
+    function filterCategory(category) {
+      const items = document.querySelectorAll('.item');
+      items.forEach(item => {
+        if (category === 'all' || item.classList.contains(category)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function filterCategory(category) {
+    const items = document.querySelectorAll('.item');
+    items.forEach(item => {
+      if (category === 'all' || item.classList.contains(category)) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+  </script>
+
+</body>
+</html>
