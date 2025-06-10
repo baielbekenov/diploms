@@ -32,6 +32,7 @@
       border-radius: 20px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       font-weight: bold;
+      cursor: pointer;
     }
     nav {
       background-color: #ffe4ec;
@@ -67,7 +68,9 @@
     }
     .item img {
       max-width: 100%;
+      height: auto;
       border-radius: 10px;
+      max-height: 250px;
     }
     .item h3 {
       font-size: 1.5em;
@@ -87,76 +90,193 @@
       cursor: pointer;
       font-size: 1em;
     }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+      text-align: center;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
   <header>
     <h1>Sweet Delights</h1>
-    <div class="cart">🛒 Корзина: <span id="cart-count">0</span></div>
+    <div class="cart" onclick="openCartModal()">🛒 Корзина: <span id="cart-count">0</span></div>
   </header>
 
   <nav>
     {% for i in category %}
     <button onclick="filterCategory('{{ i.slug }}')">{{ i.name }}</button>
     {% endfor %}
-<!--    <button onclick="filterCategory('cakes')">Торты</button>-->
-<!--    <button onclick="filterCategory('cupcakes')">Капкейки</button>-->
-<!--    <button onclick="filterCategory('macarons')">Макаронс</button>-->
   </nav>
 
   <section class="catalog" id="catalog">
     {% for i in product %}
     <div class="item {{ i.category_id.slug }}">
-      <img src="{{ i.productimages.first.image.url }}" alt="Торт 1">
+      <img src="{{ i.productimages.first.image.url }}" alt="{{ i.name }}">
       <h3>{{ i.name }}</h3>
       <p>{{ i.price }}</p>
-      <button onclick="addToCart()">Добавить в корзину</button>
+      <button onclick="addToCart({{ i.id }})">Добавить в корзину</button>
     </div>
     {% endfor %}
-<!--    <div class="item cupcakes">-->
-<!--      <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587" alt="Капкейки">-->
-<!--      <h3>Капкейки шоколад</h3>-->
-<!--      <p>450 сом</p>-->
-<!--      <button onclick="addToCart()">Добавить в корзину</button>-->
-<!--    </div>-->
-<!--    <div class="item macarons">-->
-<!--      <img src="https://images.unsplash.com/photo-1606813902911-07d5eb1b20cc" alt="Макаронс">-->
-<!--      <h3>Макаронс ассорти</h3>-->
-<!--      <p>500 сом</p>-->
-<!--      <button onclick="addToCart()">Добавить в корзину</button>-->
-<!--    </div>-->
-    <!-- Добавь больше товаров по аналогии -->
   </section>
 
+  <!-- Модальное окно корзины -->
+  <div id="cart-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="document.getElementById('cart-modal').style.display='none'">&times;</span>
+      <h2>Корзина</h2>
+      <div id="cart-items"></div>
+      <p><strong>Всего товаров:</strong> <span id="cart-modal-count">0</span></p>
+      <p><strong>Общая сумма:</strong> <span id="cart-total-price">0</span> </p>
+      <button onclick="checkout()">Купить</button>
+    </div>
+  </div>
+
   <script>
-    let cartCount = 0;
-    function addToCart() {
-      cartCount++;
-      document.getElementById('cart-count').innerText = cartCount;
+    let cart = [];
+
+    function addToCart(productId) {
+    fetch('/add-to-cart/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify({
+        product_id: productId,
+        quantity: 1
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'ok') {
+        alert('Товар добавлен в корзину!');
+        // Обновление количества корзины
+        cartCount++;
+        document.getElementById('cart-count').innerText = cartCount;
+      } else {
+        alert(data.message);
+      }
+    });
+  }
+
+  // Вспомогательная функция для получения CSRF токена
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+    function updateCartModal() {
+      const cartContainer = document.getElementById('cart-items');
+      cartContainer.innerHTML = '';
+
+      let totalPrice = 0;
+      cart.forEach(item => {
+      const itemDiv = document.createElement('div');
+      itemDiv.style.display = 'flex';
+      itemDiv.style.alignItems = 'center';
+      itemDiv.style.marginBottom = '15px';
+      itemDiv.style.gap = '15px';
+
+      const img = document.createElement('img');
+      img.src = item.image; // Это строка, где указывается картинка товара
+      img.alt = item.name;
+      img.style.width = '60px';
+      img.style.borderRadius = '10px';
+
+      const info = document.createElement('div');
+      info.innerHTML = `<strong>${item.name}</strong><br><span>${item.price}</span> руб.`;
+
+      itemDiv.appendChild(img); // Картинка добавляется в корзину
+      itemDiv.appendChild(info);
+      cartContainer.appendChild(itemDiv);
+
+      totalPrice += item.price; // Суммируем стоимость товаров
+    });
+
+      document.getElementById('cart-total-price').innerText = totalPrice.toFixed(2); // Отображаем общую сумму
     }
 
-    function filterCategory(category) {
-      const items = document.querySelectorAll('.item');
-      items.forEach(item => {
-        if (category === 'all' || item.classList.contains(category)) {
-          item.style.display = 'block';
-        } else {
-          item.style.display = 'none';
+    function openCartModal() {
+      fetch('/get-cart/')
+        .then(res => res.json())
+        .then(data => {
+            console.log('Ответ получен:', data);
+        if (data.status === 'ok') {
+          const modalBody = document.getElementById('cart-items');
+          modalBody.innerHTML = '';
+          let total = 0;
+
+          data.items.forEach(item => {
+            total += parseFloat(item.price) * item.quantity;
+            modalBody.innerHTML += `
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                <img src="${item.image}" width="80" height="80" style="object-fit:cover;border-radius:10px"/>
+                <div>
+                  <strong>${item.name}</strong><br/>
+                  ${item.price} × ${item.quantity}
+                </div>
+              </div>
+            `;
+          });
+
+          document.getElementById('cart-total-price').innerText = `Итого: ${total.toFixed(2)} сом`;
+          console.log('Открываю модалку'); // 👉
+          document.getElementById('cart-modal').style.display = 'block';
         }
       });
     }
 
-    function filterCategory(category) {
-    const items = document.querySelectorAll('.item');
-    items.forEach(item => {
-      if (category === 'all' || item.classList.contains(category)) {
-        item.style.display = 'block';
-      } else {
-        item.style.display = 'none';
+    function closeCartModal() {
+      document.getElementById('cartModal').style.display = 'none';
+    }
+
+    function checkout() {
+      alert('Спасибо за покупку!'); // Функция для оформления покупки (пока заглушка)
+      cart = []; // Очищаем корзину после покупки
+      updateCartModal(); // Обновляем модальное окно
+      closeCartModal(); // Закрываем модальное окно
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('cartModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
       }
-    });
-  }
+    };
   </script>
 
 </body>
