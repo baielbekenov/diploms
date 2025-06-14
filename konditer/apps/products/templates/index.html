@@ -93,22 +93,39 @@
 
     .modal {
       display: none;
+      align-items: center;
+      justify-content: center;
       position: fixed;
       z-index: 1000;
       left: 0; top: 0;
       width: 100%; height: 100%;
       background-color: rgba(0, 0, 0, 0.5);
+      padding: 40px 10px;
+      box-sizing: border-box;
     }
 
     .modal-content {
+      margin: 0 auto; /* 👈 добавь это */
+      overflow-y: auto;
       background-color: #fff;
-      margin: 10% auto;
       padding: 20px;
       border-radius: 10px;
-      width: 80%;
+      width: 100%;
       max-width: 500px;
-      text-align: center;
+      text-align: center; /* или center, по желанию */
       position: relative;
+      max-height: 80vh;
+    }
+
+    .primary-button {
+      margin-top: 10px;
+      background-color: #d6336c;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
     }
 
     .close-btn {
@@ -123,7 +140,7 @@
 
   <header>
     <h1>Sweet Delights</h1>
-    <div class="cart" onclick="openCartModal()">🛒 Корзина: <span id="cart-count">0</span></div>
+    <div class="cart" onclick="openCartModal()">🛒 Корзина <span id="cart-count"></span></div>
   </header>
 
   <nav>
@@ -138,7 +155,7 @@
       <img src="{{ i.productimages.first.image.url }}" alt="{{ i.name }}">
       <h3>{{ i.name }}</h3>
       <p>{{ i.price }}</p>
-      <button onclick="addToCart({{ i.id }})">Добавить в корзину</button>
+      <button class="primary-button" onclick="addToCart({{ i.id }})">Добавить в корзину</button>
     </div>
     {% endfor %}
   </section>
@@ -149,14 +166,77 @@
       <span class="close-btn" onclick="document.getElementById('cart-modal').style.display='none'">&times;</span>
       <h2>Корзина</h2>
       <div id="cart-items"></div>
-      <p><strong>Всего товаров:</strong> <span id="cart-modal-count">0</span></p>
       <p><strong>Общая сумма:</strong> <span id="cart-total-price">0</span> </p>
-      <button onclick="checkout()">Купить</button>
+      <button class="primary-button" onclick="checkout()">Купить</button>
     </div>
   </div>
 
   <script>
     let cart = [];
+
+    function filterCategory(slug) {
+      const items = document.querySelectorAll('.catalog .item');
+
+      items.forEach(item => {
+        // Показывать все, если выбрано "все"
+        if (slug === 'all' || item.classList.contains(slug)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function getCookie(name) {
+      let cookieValue = null;
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+         cookie = cookie.trim();
+         if (cookie.startsWith(name + '=')) {
+            cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+            break;
+         }
+      }
+        return cookieValue;
+    }
+
+    function checkout() {
+        fetch('/checkout/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            if (data.status === 'ok') {
+                alert('Заказ оформлен успешно!');
+                document.getElementById('cart-items').innerHTML = '';
+                document.getElementById('cart-modal-count').textContent = '0';
+                document.getElementById('cart-total-price').textContent = '0';
+                document.getElementById('cart-modal').style.display = 'none';
+            } else {
+                alert('Ошибка: ' + (data.message || 'неизвестно'));
+            }
+        });
+    }
+
+    // Функция получения CSRF токена из cookies
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    }
 
     function addToCart(productId) {
     fetch('/add-to-cart/', {
@@ -183,21 +263,6 @@
     });
   }
 
-  // Вспомогательная функция для получения CSRF токена
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
 
     function updateCartModal() {
       const cartContainer = document.getElementById('cart-items');
@@ -244,7 +309,7 @@
             total += parseFloat(item.price) * item.quantity;
             modalBody.innerHTML += `
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                <img src="${item.image}" width="80" height="80" style="object-fit:cover;border-radius:10px"/>
+                <img src="${item.image}" width="180" height="180" style="object-fit:cover;border-radius:10px"/>
                 <div>
                   <strong>${item.name}</strong><br/>
                   ${item.price} × ${item.quantity}
@@ -262,13 +327,6 @@
 
     function closeCartModal() {
       document.getElementById('cartModal').style.display = 'none';
-    }
-
-    function checkout() {
-      alert('Спасибо за покупку!'); // Функция для оформления покупки (пока заглушка)
-      cart = []; // Очищаем корзину после покупки
-      updateCartModal(); // Обновляем модальное окно
-      closeCartModal(); // Закрываем модальное окно
     }
 
     window.onclick = function(event) {
