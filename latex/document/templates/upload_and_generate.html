@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Сервис генерации документов</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(-45deg, #74ebd5, #acb6e5, #fbc2eb, #a6c1ee);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 42px;
+            font-weight: 700;
+        }
+
+        .templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 20px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .template-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 35px rgba(0,0,0,0.2);
+        }
+
+        .template-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .template-title {
+            font-weight: 700;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .template-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: #5a67d8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #434190;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 14px;
+            padding: 20px 25px;
+            width: 260px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-emoji {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: #555;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Блок преимуществ -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-emoji">⚡</div>
+                <div class="feature-title">Мгновенно</div>
+                <div class="feature-desc">PDF готов за пару секунд — без ожиданий и очередей.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-emoji">🎨</div>
+                <div class="feature-title">Гибкие шаблоны</div>
+                <div class="feature-desc">Добавляйте или изменяйте LaTeX-шаблоны прямо из панели администратора.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-emoji">🌍</div>
+                <div class="feature-title">Поддержка кириллицы</div>
+                <div class="feature-desc">Генерируйте документы на русском без ошибок LaTeX.</div>
+            </div>
+        </div>
+
+        <h1>Выберите юридический шаблон</h1>
+        <div class="templates">
+            {% for tmpl in templates %}
+            <div class="template-card" onclick="openModal({{ tmpl.id }}, '{{ tmpl.name }}')">
+                <div class="template-icon">📄</div>
+                <div class="template-title">{{ tmpl.name }}</div>
+                <div class="template-desc">Надёжный шаблон юридического документа для повседневного использования.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 id="modalTemplateName">Загрузка файла</h3>
+            <form id="uploadForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="file" accept=".pdf,.docx" required>
+                <input type="hidden" name="template_id" id="templateIdField">
+                <button type="submit">Сгенерировать PDF</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(templateId, templateName) {
+            document.getElementById('uploadModal').style.display = 'flex';
+            document.getElementById('templateIdField').value = templateId;
+            document.getElementById('modalTemplateName').innerText = `Шаблон: ${templateName}`;
+        }
+
+        function closeModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,13 +1,14 @@
 from django.contrib import admin
 
-from document.models import User, Contract
+from document.models import User, Contract, LatexTemplate, UploadedDocument
 from django.urls import reverse
 from django.utils.html import format_html
 # Register your models here.
 
 
 admin.site.register(User)
-
+admin.site.register(LatexTemplate)
+admin.site.register(UploadedDocument)
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):

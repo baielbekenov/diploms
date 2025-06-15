@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('private-admin8/', admin.site.urls),
-    path('', include('admin_material.urls')),
     path('', include('document.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('dev97-console/', admin.site.urls),
+    path('', include('apps.materials.urls')),
+    path('', include('apps.submissions.urls')),
     path('', include('admin_soft.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

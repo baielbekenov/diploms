@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Задания по модулю: {{ module.title }}</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .assignment {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .assignment h2 {
+      font-size: 18px;
+      color: #007acc;
+      margin-bottom: 10px;
+    }
+
+    .assignment p {
+      margin-bottom: 10px;
+      color: #444;
+    }
+
+    .assignment textarea {
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+
+    .assignment button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .assignment button:hover {
+      background-color: #218838;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .correct {
+      color: #28a745;
+    }
+
+    .wrong {
+      color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Задания: {{ module.title }}</h1>
+
+  {% for assignment in assignments %}
+  <div class="assignment">
+    <h2>Задание {{ forloop.counter }}</h2>
+    <p>{{ assignment.question }}</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="assignment_id" value="{{ assignment.id }}">
+      <textarea name="answer" required placeholder="Введите ваш ответ..."></textarea>
+      <br>
+      <button type="submit">Отправить</button>
+    </form>
+
+    {% if submitted_assignment.id == assignment.id %}
+      <div class="feedback {% if is_correct %}correct{% else %}wrong{% endif %}">
+        {% if is_correct %}
+          ✅ Верно!
+        {% else %}
+          ❌ Неверно. Попробуйте ещё раз.
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+  {% empty %}
+  <p style="text-align:center;">Пока нет заданий для этого модуля.</p>
+  {% endfor %}
+
+</body>
+</html>

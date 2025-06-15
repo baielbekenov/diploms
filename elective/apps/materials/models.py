@@ -37,6 +37,7 @@ class Enrollment(models.Model):
     course = models.ForeignKey(ElectiveCourse, on_delete=models.CASCADE)
     enrolled_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=False)
     grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
     class Meta:
@@ -45,7 +46,7 @@ class Enrollment(models.Model):
         unique_together = ('user', 'course')
 
     def __str__(self):
-        return f"{self.user.username} → {self.course.title}"
+        return f"{self.user.phone} → {self.course.title}"
 
 
 class Progress(models.Model):

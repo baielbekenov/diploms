@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Элективные курсы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f7f7f7;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f0f8ff;
+        }
+
+        tr:hover {
+            background-color: #e6f2ff;
+        }
+
+        .btn {
+            background-color: #28a745;
+            color: white;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .inactive {
+            background-color: #dc3545;
+        }
+
+        .inactive:hover {
+            background-color: #c82333;
+        }
+        .modal {
+          position: fixed;
+          z-index: 1000;
+          left: 0; top: 0;
+          width: 100%; height: 100%;
+          overflow: auto;
+          background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+          background-color: #fff;
+          margin: 15% auto;
+          padding: 20px 30px;
+          border-radius: 10px;
+          width: 400px;
+          text-align: center;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .close {
+          float: right;
+          font-size: 24px;
+          cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список элективных курсов</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Преподаватель</th>
+                <th>Описание</th>
+                <th>Начало</th>
+                <th>Окончание</th>
+                <th>Статус</th>
+                <th>Действия</th>
+                <th>Модули</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.title }}</td>
+                <td>{{ course.teacher }}</td>
+                <td>{{ course.description|truncatechars:100 }}</td>
+                <td>{{ course.start_date }}</td>
+                <td>{{ course.end_date }}</td>
+                <td>
+                    {% if course.is_active %}
+                        Активен
+                    {% else %}
+                        Неактивен
+                    {% endif %}
+                </td>
+                <td>
+                    {% if course.is_active %}
+                        <button class="btn enroll-btn" data-course-id="{{ course.id }}">Записаться</button>
+                    {% else %}
+                        <span class="btn inactive">Недоступен</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'course_modules' course.id %}" class="btn view">Модули</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center;">Курсы не найдены.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="enrollModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="close" onclick="closeEnrollModal()">&times;</span>
+        <p id="enroll-message">Вы успешно записались на курс!</p>
+      </div>
+    </div>
+    <script>
+        function closeEnrollModal() {
+            document.getElementById("enrollModal").style.display = "none";
+        }
+
+        document.querySelectorAll('.enroll-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const courseId = btn.dataset.courseId;
+
+                fetch(`/courses/enroll/${courseId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        document.getElementById('enroll-message').textContent = data.message;
+                        document.getElementById('enrollModal').style.display = 'block';
+                    } else {
+                        alert(data.message || 'Ошибка при записи на курс.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

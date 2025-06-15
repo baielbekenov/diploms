@@ -35,7 +35,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     groups = models.ManyToManyField(
-        'users.Group',
+        'auth.Group',
         related_name='custom_user_set',
         blank=True,
         help_text='The groups this user belongs to.',
@@ -43,7 +43,7 @@ class User(AbstractUser):
     )
 
     user_permissions = models.ManyToManyField(
-        'users.Permission',
+        'auth.Permission',
         related_name='custom_user_permissions',
         blank=True,
         help_text='Specific permissions for this user.',
@@ -71,6 +71,22 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+
+class LatexTemplate(models.Model):
+    name = models.CharField(max_length=255)
+    content = models.TextField(help_text="LaTeX-шаблон с переменными вида {{ variable }}")
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class UploadedDocument(models.Model):
+    file = models.FileField(upload_to='uploads/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    extracted_text = models.TextField(blank=True, null=True)
 
 
 class Contract(models.Model):

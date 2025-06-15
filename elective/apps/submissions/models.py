@@ -14,6 +14,9 @@ class Assignment(models.Model):
         verbose_name = 'Задание'
         verbose_name_plural = 'Задания'
 
+    def __str__(self):
+        return f"{self.module.course.title} - {self.module.title}"
+
 
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
