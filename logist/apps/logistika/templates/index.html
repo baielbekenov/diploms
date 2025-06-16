@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Логистика Азия - Главная</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Rubik', sans-serif;
+    }
+    body {
+      background: #f7f9fc;
+      color: #333;
+    }
+    header {
+      background: #004080;
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      font-size: 28px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(to right, #004080, #0066cc);
+      color: white;
+      border-radius: 12px;
+      margin-bottom: 40px;
+    }
+    .hero h2 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 18px;
+    }
+    .form-section {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+    .form-section h3 {
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    form input, form select {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    form button {
+      grid-column: span 2;
+      padding: 14px;
+      background: #004080;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    form button:hover {
+      background: #003060;
+    }
+    .routes, .cities {
+      margin-bottom: 40px;
+    }
+    .routes h3, .cities h3 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    .route-list, .city-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .route-item, .city-item {
+      flex: 1 1 250px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #eaeaea;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Логистика Азия</h1>
+    <nav>
+      <a href="#form" style="color:white; margin-right: 20px;">Заявка</a>
+      <a href="#routes" style="color:white; margin-right: 20px;">Маршруты</a>
+      <a href="#cities" style="color:white;">Города</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <h2>Надёжные грузоперевозки по Центральной Азии</h2>
+      <p>Мы соединяем клиентов и водителей — быстро, безопасно и удобно</p>
+    </section>
+
+    <section class="form-section" id="form">
+      <h3>Оставить заявку</h3>
+      <form>
+        <input type="text" placeholder="Имя" required />
+        <input type="text" placeholder="Телефон" required />
+        <input type="email" placeholder="Email" />
+        <input type="text" placeholder="Адрес" required />
+        <select required>
+          <option value="">Тип клиента</option>
+          <option value="sender">Отправитель</option>
+          <option value="receiver">Получатель</option>
+        </select>
+        <button type="submit">Отправить</button>
+      </form>
+    </section>
+
+    <section class="routes" id="routes">
+      <h3>Популярные маршруты доставки</h3>
+      <div class="route-list">
+        <div class="route-item">Бишкек → Ош</div>
+        <div class="route-item">Бишкек → Алматы</div>
+        <div class="route-item">Ош → Джалал-Абад</div>
+        <div class="route-item">Бишкек → Ташкент</div>
+        <div class="route-item">Бишкек → Нарын</div>
+        <div class="route-item">Алматы → Каракол</div>
+      </div>
+    </section>
+
+    <section class="cities" id="cities">
+      <h3>Доставка в города</h3>
+      <div class="city-list">
+        <div class="city-item">Бишкек</div>
+        <div class="city-item">Ош</div>
+        <div class="city-item">Талас</div>
+        <div class="city-item">Баткен</div>
+        <div class="city-item">Нарын</div>
+        <div class="city-item">Джалал-Абад</div>
+        <div class="city-item">Каракол</div>
+        <div class="city-item">Ташкент</div>
+        <div class="city-item">Алматы</div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    &copy; 2025 Логистика Азия. Все права защищены.
+  </footer>
+
+</body>
+</html>

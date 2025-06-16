@@ -35,7 +35,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     groups = models.ManyToManyField(
-        'users.Group',
+        'auth.Group',
         related_name='custom_user_set',
         blank=True,
         help_text='The groups this user belongs to.',
@@ -43,7 +43,7 @@ class User(AbstractUser):
     )
 
     user_permissions = models.ManyToManyField(
-        'users.Permission',
+        'auth.Permission',
         related_name='custom_user_permissions',
         blank=True,
         help_text='Specific permissions for this user.',
