@@ -51,6 +51,21 @@ class Vehicle(models.Model):
         return f"{self.number_plate} ({self.brand})"
 
 
+class City(models.Model):
+    name = models.CharField(max_length=100, unique=True, verbose_name="Название города")
+    image = models.ImageField(upload_to='city_images/', blank=True, null=True, verbose_name="Фотография города")
+    description = models.TextField(blank=True, verbose_name="Описание города")
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class OrderStatus(models.TextChoices):
     CREATED = 'created', 'Создан'
     IN_TRANSIT = 'in_transit', 'В пути'

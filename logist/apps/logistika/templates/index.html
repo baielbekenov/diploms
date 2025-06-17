@@ -117,8 +117,8 @@
     <h1>Логистика Азия</h1>
     <nav>
       <a href="#form" style="color:white; margin-right: 20px;">Заявка</a>
-      <a href="#routes" style="color:white; margin-right: 20px;">Маршруты</a>
-      <a href="#cities" style="color:white;">Города</a>
+      <a href="{% url 'route' %}" style="color:white; margin-right: 20px;">Маршруты</a>
+      <a href="{% url 'city' %}" style="color:white;">Города</a>
     </nav>
   </header>
 
@@ -130,19 +130,72 @@
 
     <section class="form-section" id="form">
       <h3>Оставить заявку</h3>
-      <form>
-        <input type="text" placeholder="Имя" required />
-        <input type="text" placeholder="Телефон" required />
-        <input type="email" placeholder="Email" />
-        <input type="text" placeholder="Адрес" required />
-        <select required>
+      <form method="post">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Имя" value="{{ form.name.value|default_if_none:'' }}" required>
+        <input type="text" name="phone" placeholder="Телефон" value="{{ form.phone.value|default_if_none:'' }}" required>
+        <input type="email" name="email" placeholder="Email" value="{{ form.email.value|default_if_none:'' }}">
+        <input type="text" name="address" placeholder="Адрес" value="{{ form.address.value|default_if_none:'' }}" required>
+        <select name="client_type" required>
           <option value="">Тип клиента</option>
-          <option value="sender">Отправитель</option>
-          <option value="receiver">Получатель</option>
+          <option value="sender" {% if form.client_type.value == "sender" %}selected{% endif %}>Отправитель</option>
+          <option value="receiver" {% if form.client_type.value == "receiver" %}selected{% endif %}>Получатель</option>
         </select>
         <button type="submit">Отправить</button>
       </form>
     </section>
+
+    <section class="form-section" id="order">
+    <h3>Оформить заказ</h3>
+    <form method="post">
+      {% csrf_token %}
+      {{ order_form.non_field_errors }}
+
+      <select name="client_from" required>
+        <option value="">Отправитель</option>
+        {% for client in clients %}
+          <option value="{{ client.id }}" {% if order_form.client_from.value|stringformat:"s" == client.id|stringformat:"s" %}selected{% endif %}>
+            {{ client.name }} — {{ client.address }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <select name="client_to" required>
+        <option value="">Получатель</option>
+        {% for client in clients %}
+          <option value="{{ client.id }}" {% if order_form.client_to.value|stringformat:"s" == client.id|stringformat:"s" %}selected{% endif %}>
+            {{ client.name }} — {{ client.address }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <textarea name="cargo_description" placeholder="Описание груза" required>{{ order_form.cargo_description.value|default_if_none:'' }}</textarea>
+      <input type="number" name="weight" step="0.01" placeholder="Вес (кг)" value="{{ order_form.weight.value|default_if_none:'' }}" required>
+      <input type="number" name="volume" step="0.01" placeholder="Объем (м³)" value="{{ order_form.volume.value|default_if_none:'' }}" required>
+
+      <select name="vehicle">
+        <option value="">Машина (необязательно)</option>
+        {% for v in vehicles %}
+          <option value="{{ v.id }}" {% if order_form.vehicle.value|stringformat:"s" == v.id|stringformat:"s" %}selected{% endif %}>
+            {{ v }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <select name="driver">
+        <option value="">Водитель (необязательно)</option>
+        {% for d in drivers %}
+          <option value="{{ d.id }}" {% if order_form.driver.value|stringformat:"s" == d.id|stringformat:"s" %}selected{% endif %}>
+            {{ d }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <input type="date" name="delivery_date" value="{{ order_form.delivery_date.value|default_if_none:'' }}">
+
+      <button type="submit" name="submit_order">Оформить заказ</button>
+    </form>
+  </section>
 
     <section class="routes" id="routes">
       <h3>Популярные маршруты доставки</h3>
@@ -175,6 +228,15 @@
   <footer>
     &copy; 2025 Логистика Азия. Все права защищены.
   </footer>
-
+  {% if messages %}
+  <div id="success-modal" style="display:block;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;">
+    <div style="background:white;padding:30px;border-radius:10px;width:90%;max-width:400px;margin:100px auto;text-align:center;">
+      {% for message in messages %}
+        <h3 style="margin-bottom:10px;">{{ message }}</h3>
+      {% endfor %}
+      <button onclick="document.getElementById('success-modal').style.display='none'" style="margin-top:20px;padding:10px 20px;background:#004080;color:white;border:none;border-radius:6px;">ОК</button>
+    </div>
+  </div>
+  {% endif %}
 </body>
 </html>

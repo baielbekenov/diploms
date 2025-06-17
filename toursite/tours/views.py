@@ -15,7 +15,7 @@ def index(request):
 
 def index1(request):
     destinations = Destination.objects.all()
-    return render(request, 'index1.html', {'destinations': destinations})
+    return render(request, 'cities.html', {'destinations': destinations})
 
 
 def search_tours(request):
