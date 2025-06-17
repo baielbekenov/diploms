@@ -1,5 +1,5 @@
 from django import forms
-from .models import Client, Order
+from .models import Client, Order, City
 
 
 class ClientForm(forms.ModelForm):
@@ -18,4 +18,11 @@ class ClientForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['client_from', 'client_to', 'cargo_description', 'weight', 'volume', 'vehicle', 'driver', 'delivery_date']
+        fields = ['name', 'cargo_description', 'weight', 'volume', 'delivery_date']
+
+
+class DeliveryCalculatorForm(forms.Form):
+    from_city = forms.ModelChoiceField(queryset=City.objects.all(), label="Откуда")
+    to_city = forms.ModelChoiceField(queryset=City.objects.all(), label="Куда")
+    weight = forms.FloatField(label="Вес (кг)")
+    volume = forms.FloatField(label="Объем (м³)")

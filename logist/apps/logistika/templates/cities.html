@@ -100,42 +100,44 @@
 
     <section id="cities">
       <div class="city-gallery">
+        {% for city in cities %}
         <div class="city-card">
-          <img src="{% static 'img/bishkek.jpg' %}" alt="Бишкек" />
-          <h3>Бишкек</h3>
+          <img src="{{ city.image.url }}" alt="{{ city.name }}" />
+          <h3>{{ city.name }}</h3>
         </div>
-        <div class="city-card">
-          <img src="{% static 'img/osh.jpg' %}" alt="Ош" />
-          <h3>Ош</h3>
-        </div>
-        <div class="city-card">
-          <img src="{% static 'img/jalalabad.jpg' %}" alt="Джалал-Абад" />
-          <h3>Джалал-Абад</h3>
-        </div>
-        <div class="city-card">
-          <img src="{% static 'img/talas.jpg' %}" alt="Талас" />
-          <h3>Талас</h3>
-        </div>
-        <div class="city-card">
-          <img src="{% static 'img/naryn.jpg' %}" alt="Нарын" />
-          <h3>Нарын</h3>
-        </div>
-        <div class="city-card">
-          <img src="{% static 'img/batken.jpg' %}" alt="Баткен" />
-          <h3>Баткен</h3>
-        </div>
-        <div class="city-card">
-          <img src="{% static 'img/karakol.jpg' %}" alt="Каракол" />
-          <h3>Каракол</h3>
-        </div>
-        <div class="city-card">
-          <img src="{% static 'img/tashkent.jpg' %}" alt="Ташкент" />
-          <h3>Ташкент</h3>
-        </div>
-        <div class="city-card">
-          <img src="{% static 'img/almaty.jpg' %}" alt="Алматы" />
-          <h3>Алматы</h3>
-        </div>
+        {% endfor %}
+<!--        <div class="city-card">-->
+<!--          <img src="{% static 'img/osh.jpg' %}" alt="Ош" />-->
+<!--          <h3>Ош</h3>-->
+<!--        </div>-->
+<!--        <div class="city-card">-->
+<!--          <img src="{% static 'img/jalalabad.jpg' %}" alt="Джалал-Абад" />-->
+<!--          <h3>Джалал-Абад</h3>-->
+<!--        </div>-->
+<!--        <div class="city-card">-->
+<!--          <img src="{% static 'img/talas.jpg' %}" alt="Талас" />-->
+<!--          <h3>Талас</h3>-->
+<!--        </div>-->
+<!--        <div class="city-card">-->
+<!--          <img src="{% static 'img/naryn.jpg' %}" alt="Нарын" />-->
+<!--          <h3>Нарын</h3>-->
+<!--        </div>-->
+<!--        <div class="city-card">-->
+<!--          <img src="{% static 'img/batken.jpg' %}" alt="Баткен" />-->
+<!--          <h3>Баткен</h3>-->
+<!--        </div>-->
+<!--        <div class="city-card">-->
+<!--          <img src="{% static 'img/karakol.jpg' %}" alt="Каракол" />-->
+<!--          <h3>Каракол</h3>-->
+<!--        </div>-->
+<!--        <div class="city-card">-->
+<!--          <img src="{% static 'img/tashkent.jpg' %}" alt="Ташкент" />-->
+<!--          <h3>Ташкент</h3>-->
+<!--        </div>-->
+<!--        <div class="city-card">-->
+<!--          <img src="{% static 'img/almaty.jpg' %}" alt="Алматы" />-->
+<!--          <h3>Алматы</h3>-->
+<!--        </div>-->
       </div>
     </section>
   </div>

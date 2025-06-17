@@ -116,16 +116,61 @@
   <header>
     <h1>Логистика Азия</h1>
     <nav>
-      <a href="#form" style="color:white; margin-right: 20px;">Заявка</a>
-      <a href="{% url 'route' %}" style="color:white; margin-right: 20px;">Маршруты</a>
-      <a href="{% url 'city' %}" style="color:white;">Города</a>
-    </nav>
+    {% if user.is_authenticated %}
+        {% if user.driver %}
+            <a href="{% url 'orders' %}" style="color:white; margin-right: 20px;">Заявка</a>
+        {% endif %}
+        <a href="{% url 'logout1' %}" style="color:white; margin-right: 20px;">Выйти</a>
+    {% else %}
+        <a href="{% url 'login1' %}" style="color:white; margin-right: 20px;">Войти</a>
+        <a href="{% url 'register1' %}" style="color:white; margin-right: 20px;">Регистрация</a>
+    {% endif %}
+    <a href="{% url 'route' %}" style="color:white; margin-right: 20px;">Маршруты</a>
+    <a href="{% url 'city' %}" style="color:white;">Города</a>
+</nav>
   </header>
 
   <div class="container">
     <section class="hero">
       <h2>Надёжные грузоперевозки по Центральной Азии</h2>
       <p>Мы соединяем клиентов и водителей — быстро, безопасно и удобно</p>
+    </section>
+
+    <section class="form-section" id="calculator">
+      <h3>Калькулятор доставки</h3>
+      <form method="post">
+        {% csrf_token %}
+
+        <!-- Калькулятор -->
+        <select name="from_city" required>
+          <option value="">Откуда</option>
+          {% for city in cities %}
+            <option value="{{ city.id }}" {% if calculator_form.from_city.value == city.id|stringformat:"s" %}selected{% endif %}>{{ city.name }}</option>
+          {% endfor %}
+        </select>
+
+        <select name="to_city" required>
+          <option value="">Куда</option>
+          {% for city in cities %}
+            <option value="{{ city.id }}" {% if calculator_form.to_city.value == city.id|stringformat:"s" %}selected{% endif %}>{{ city.name }}</option>
+          {% endfor %}
+        </select>
+
+        <input type="number" name="weight" step="0.01" placeholder="Вес (кг)" value="{{ calculator_form.weight.value|default_if_none:'' }}" required>
+        <input type="number" name="volume" step="0.01" placeholder="Объем (м³)" value="{{ calculator_form.volume.value|default_if_none:'' }}" required>
+
+        <button type="submit" name="submit_calculator">Рассчитать</button>
+      </form>
+
+      {% if delivery_result %}
+        <div class="result-block">
+          <h4>Результат:</h4>
+          <p><strong>Маршрут:</strong> {{ delivery_result.from }} → {{ delivery_result.to }}</p>
+          <p><strong>Расстояние:</strong> {{ delivery_result.distance }} км</p>
+          <p><strong>Время доставки:</strong> {{ delivery_result.duration }} дней</p>
+          <p><strong>Стоимость:</strong> {{ delivery_result.price }} сом</p>
+        </div>
+      {% endif %}
     </section>
 
     <section class="form-section" id="form">
@@ -151,45 +196,13 @@
       {% csrf_token %}
       {{ order_form.non_field_errors }}
 
-      <select name="client_from" required>
-        <option value="">Отправитель</option>
-        {% for client in clients %}
-          <option value="{{ client.id }}" {% if order_form.client_from.value|stringformat:"s" == client.id|stringformat:"s" %}selected{% endif %}>
-            {{ client.name }} — {{ client.address }}
-          </option>
-        {% endfor %}
-      </select>
+      <input type="text" name="name" step="0.01" placeholder="Имя" value="{{ order_form.name.value|default_if_none:'' }}" required>
 
-      <select name="client_to" required>
-        <option value="">Получатель</option>
-        {% for client in clients %}
-          <option value="{{ client.id }}" {% if order_form.client_to.value|stringformat:"s" == client.id|stringformat:"s" %}selected{% endif %}>
-            {{ client.name }} — {{ client.address }}
-          </option>
-        {% endfor %}
-      </select>
-
-      <textarea name="cargo_description" placeholder="Описание груза" required>{{ order_form.cargo_description.value|default_if_none:'' }}</textarea>
+      <textarea type="text" name="cargo_description" placeholder="Описание груза" required>{{ order_form.cargo_description.value|default_if_none:'' }}</textarea>
       <input type="number" name="weight" step="0.01" placeholder="Вес (кг)" value="{{ order_form.weight.value|default_if_none:'' }}" required>
       <input type="number" name="volume" step="0.01" placeholder="Объем (м³)" value="{{ order_form.volume.value|default_if_none:'' }}" required>
 
-      <select name="vehicle">
-        <option value="">Машина (необязательно)</option>
-        {% for v in vehicles %}
-          <option value="{{ v.id }}" {% if order_form.vehicle.value|stringformat:"s" == v.id|stringformat:"s" %}selected{% endif %}>
-            {{ v }}
-          </option>
-        {% endfor %}
-      </select>
 
-      <select name="driver">
-        <option value="">Водитель (необязательно)</option>
-        {% for d in drivers %}
-          <option value="{{ d.id }}" {% if order_form.driver.value|stringformat:"s" == d.id|stringformat:"s" %}selected{% endif %}>
-            {{ d }}
-          </option>
-        {% endfor %}
-      </select>
 
       <input type="date" name="delivery_date" value="{{ order_form.delivery_date.value|default_if_none:'' }}">
 

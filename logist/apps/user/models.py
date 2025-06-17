@@ -54,9 +54,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=13, unique=True, null=False, verbose_name='Номер телефона')
     user_phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name='Номер телефон пользователя')
     email = models.EmailField(unique=True, null=True, blank=True)
-    code = models.CharField(max_length=50, null=True, verbose_name='Код', blank=True)
-    last_sms_date = models.DateTimeField(null=True, verbose_name='Дата отправки кода', blank=True)
-    is_confirm = models.BooleanField(default=False, blank=True, verbose_name='Подтверждение почты')
+    driver = models.CharField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True, verbose_name='Дата создание')
     objects = UserManager()
     last_name = None

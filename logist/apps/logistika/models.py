@@ -66,6 +66,21 @@ class City(models.Model):
         return self.name
 
 
+class Route(models.Model):
+    from_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='routes_from', verbose_name="Откуда")
+    to_city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='routes_to', verbose_name="Куда")
+    distance_km = models.PositiveIntegerField(verbose_name="Расстояние (км)")
+    duration = models.CharField(max_length=100, verbose_name="Время доставки")
+    price = models.PositiveIntegerField(verbose_name="Цена (в сомах)")
+
+    def __str__(self):
+        return f"{self.from_city} → {self.to_city}"
+
+    class Meta:
+        verbose_name = "Маршрут"
+        verbose_name_plural = "Маршруты"
+
+
 class OrderStatus(models.TextChoices):
     CREATED = 'created', 'Создан'
     IN_TRANSIT = 'in_transit', 'В пути'
@@ -74,13 +89,10 @@ class OrderStatus(models.TextChoices):
 
 
 class Order(models.Model):
-    client_from = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='orders_sent', verbose_name="Отправитель")
-    client_to = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='orders_received', verbose_name="Получатель")
+    name = models.CharField(max_length=255, verbose_name="Имя")
     cargo_description = models.TextField(verbose_name="Описание груза")
     weight = models.FloatField(verbose_name="Вес (кг)")
     volume = models.FloatField(verbose_name="Объем (м³)")
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Машина")
-    driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Водитель")
     status = models.CharField(max_length=20, choices=OrderStatus.choices, default=OrderStatus.CREATED, verbose_name="Статус")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     delivery_date = models.DateField(null=True, blank=True, verbose_name="Дата доставки")
@@ -90,4 +102,4 @@ class Order(models.Model):
         verbose_name_plural = "Заказы"
 
     def __str__(self):
-        return f"Заказ #{self.pk} от {self.client_from} к {self.client_to}"
+        return f"Заказ #{self.pk} - {self.name}"
