@@ -84,7 +84,7 @@ def generate_from_template(request):
 
         # Передаём исправленный текст в LaTeX шаблон
         rendered_latex = render_latex_template(template.content, {
-            'document_text': corrected_text.strip()
+            'document_text': text.strip()
         })
 
         pdf_bytes = compile_latex_to_pdf(rendered_latex)
