@@ -23,6 +23,7 @@ urlpatterns = [
     path(r'jet/', include('jet.urls', 'jet')),
     path('core-admin8/', admin.site.urls),
     path('', include('apps.products.urls')),
+    path('', include('apps.users.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
