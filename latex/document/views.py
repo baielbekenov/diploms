@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from docx import Document as DocxDocument
 from django.template import Template, Context
+import language_tool_python
 
 
 def generate_contract(request, contract_id):
@@ -30,18 +31,27 @@ def generate_contract(request, contract_id):
 def extract_text_from_file(file_path):
     if file_path.endswith('.docx'):
         doc = DocxDocument(file_path)
-        return "\n".join([p.text for p in doc.paragraphs])
+        text = "\n".join([p.text for p in doc.paragraphs])
+        return text.encode('utf-8').decode('utf-8')  # Корректная кодировка
+
     elif file_path.endswith('.pdf'):
         text = ""
         with fitz.open(file_path) as doc:
             for page in doc:
                 text += page.get_text()
-        return text
+        return text.encode('utf-8').decode('utf-8')  # Корректная кодировка
+
     return ""
+
+def correct_grammar(text):
+    tool = language_tool_python.LanguageTool('en-US')
+    matches = tool.check(text)
+    corrected_text = language_tool_python.utils.correct(text, matches)
+    return corrected_text
 
 
 def render_latex_template(latex_content, context_dict):
-    # Используем Django шаблонизатор, чтобы заменить {{ }} переменные
+    # Используем Django шаблонизатор для замены переменных
     django_template = Template(latex_content)
     context = Context(context_dict)
     return django_template.render(context)
@@ -75,12 +85,16 @@ def generate_from_template(request):
 
         uploaded = UploadedDocument.objects.create(file=file)
         text = extract_text_from_file(uploaded.file.path)
-        uploaded.extracted_text = text
+
+        # Исправление грамматических ошибок
+        corrected_text = correct_grammar(text)
+
+        uploaded.extracted_text = corrected_text
         uploaded.save()
 
-        # Передаём всё содержимое как одна переменная
+        # Передаём исправленный текст в LaTeX шаблон
         rendered_latex = render_latex_template(template.content, {
-            'document_text': text.strip()
+            'document_text': corrected_text.strip()
         })
 
         pdf_bytes = compile_latex_to_pdf(rendered_latex)
