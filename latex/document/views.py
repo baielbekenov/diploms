@@ -7,7 +7,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from docx import Document as DocxDocument
 from django.template import Template, Context
-import language_tool_python
 
 
 def generate_contract(request, contract_id):
