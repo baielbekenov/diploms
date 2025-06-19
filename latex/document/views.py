@@ -43,12 +43,6 @@ def extract_text_from_file(file_path):
 
     return ""
 
-def correct_grammar(text):
-    tool = language_tool_python.LanguageTool('en-US')
-    matches = tool.check(text)
-    corrected_text = language_tool_python.utils.correct(text, matches)
-    return corrected_text
-
 
 def render_latex_template(latex_content, context_dict):
     # Используем Django шаблонизатор для замены переменных
@@ -86,10 +80,7 @@ def generate_from_template(request):
         uploaded = UploadedDocument.objects.create(file=file)
         text = extract_text_from_file(uploaded.file.path)
 
-        # Исправление грамматических ошибок
-        corrected_text = correct_grammar(text)
-
-        uploaded.extracted_text = corrected_text
+        uploaded.extracted_text = text
         uploaded.save()
 
         # Передаём исправленный текст в LaTeX шаблон
