@@ -18,8 +18,8 @@ services:
     container_name: elective
     ports:
       - "6295:6295"
-    volumes:
-      - ./elective/db.sqlite3:/app/db.sqlite3
+#    volumes:
+#      - ./elective/db.sqlite3:/app/db.sqlite3
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:6295
 
