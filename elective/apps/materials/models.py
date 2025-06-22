@@ -4,12 +4,12 @@ from apps.users.models import User
 
 
 class ElectiveCourse(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-    teacher = models.CharField(max_length=100)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    is_active = models.BooleanField(default=True)
+    title = models.CharField(max_length=200, verbose_name='Название')
+    description = models.TextField(verbose_name='Описание')
+    teacher = models.CharField(max_length=100, verbose_name='Преподаватель')
+    start_date = models.DateField(verbose_name='Дата начало')
+    end_date = models.DateField(verbose_name='Дата конца')
+    is_active = models.BooleanField(default=True, verbose_name='Активный')
 
     class Meta:
         verbose_name = 'Элективный курс'
@@ -20,9 +20,9 @@ class ElectiveCourse(models.Model):
 
 
 class CourseModule(models.Model):
-    course = models.ForeignKey(ElectiveCourse, on_delete=models.CASCADE, related_name='modules')
-    title = models.CharField(max_length=200)
-    content = models.TextField(blank=True)  # Можно заменить на FileField для PDF/видео
+    course = models.ForeignKey(ElectiveCourse, on_delete=models.CASCADE, related_name='modules', verbose_name='Модуль')
+    title = models.CharField(max_length=200, verbose_name='Название')
+    content = models.TextField(blank=True, verbose_name='Контент')  # Можно заменить на FileField для PDF/видео
 
     class Meta:
         verbose_name = 'Тема курса'
@@ -33,12 +33,12 @@ class CourseModule(models.Model):
 
 
 class Enrollment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    course = models.ForeignKey(ElectiveCourse, on_delete=models.CASCADE)
-    enrolled_at = models.DateTimeField(auto_now_add=True)
-    completed = models.BooleanField(default=False)
-    accepted = models.BooleanField(default=False)
-    grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Студент')
+    course = models.ForeignKey(ElectiveCourse, on_delete=models.CASCADE, verbose_name='Курс')
+    enrolled_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата записи')
+    completed = models.BooleanField(default=False, verbose_name='Завершен')
+    accepted = models.BooleanField(default=False, verbose_name='Принято')
+    grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, verbose_name='Оценка')
 
     class Meta:
         verbose_name = 'Запись на курс'
@@ -50,10 +50,10 @@ class Enrollment(models.Model):
 
 
 class Progress(models.Model):
-    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name='progress')
-    module = models.ForeignKey(CourseModule, on_delete=models.CASCADE)
-    is_completed = models.BooleanField(default=False)
-    completed_at = models.DateTimeField(null=True, blank=True)
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name='progress', verbose_name='Запись')
+    module = models.ForeignKey(CourseModule, on_delete=models.CASCADE, verbose_name='Модуль')
+    is_completed = models.BooleanField(default=False, verbose_name='Завершен')
+    completed_at = models.DateTimeField(null=True, blank=True, verbose_name='Дата завершение')
 
     class Meta:
         verbose_name = 'Прогресс'

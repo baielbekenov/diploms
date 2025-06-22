@@ -2,8 +2,16 @@ from django.contrib import admin, messages
 
 from apps.materials.models import ElectiveCourse, CourseModule, Enrollment, Progress
 
-admin.site.register(ElectiveCourse)
-admin.site.register(CourseModule)
+
+@admin.register(ElectiveCourse)
+class ElectiveCourseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'teacher', 'start_date', 'end_date', 'is_active')
+
+
+@admin.register(CourseModule)
+class CourseModuleAdmin(admin.ModelAdmin):
+    list_display = ('course', 'title')
+
 
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
