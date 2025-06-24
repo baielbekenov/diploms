@@ -14,7 +14,7 @@
       <div class="row">
         <div class="product-img col-sm-5 text-center">
           <img
-            src="{{product.product_image.url}}"
+            src="{{product.image.url}}"
             alt=""
             class="img-fluid img-thumbnail"
           />
@@ -22,7 +22,7 @@
           <h4>
              {{product.discounted_price}} сом
             <small class="fw-light text-decoration-line-through">
-              {{product.selling_price}}
+              {{product.price}}
             </small>
           </h4>
 
@@ -31,10 +31,10 @@
               {% if request.user.is_authenticated %}
                 {% if cart_state %}
                   <button type="submit" class="product-btn cart bg-secondary">
-                    Go to Cart&nbsp;&nbsp;
+                   Идти в корзину&nbsp;&nbsp;
                 {% else %}
                   <!-- Stock Validation -->
-                  {% if product.stock == 0 %}
+                  {% if product.stock_quantity == 0 %}
                     <button type="submit" class="product-btn btn disabled cart bg-primary">
                       Добавить в корзину&nbsp;&nbsp;
                   {% else %}
@@ -44,7 +44,7 @@
                 {% endif %}
               {% else %}
                 <!-- Stock Validation -->
-                {% if product.stock == 0 %}
+                {% if product.stock_quantity == 0 %}
                   <button type="submit" class="product-btn btn disabled cart bg-primary">
                     Добавить в корзину&nbsp;&nbsp;
                 {% else %}
@@ -56,27 +56,27 @@
             </button>
           </form>
 
-          {% if product.stock == 0 %}
-            <button type="button" class="product-btn btn buy bg-danger disabled"> Buy Now&nbsp;&nbsp; <i class="fas fa-shopping-bag"></i></button>
+          {% if product.stock_quantity == 0 %}
+            <button type="button" class="product-btn btn buy bg-danger disabled"> Купить сейчас&nbsp;&nbsp; <i class="fas fa-shopping-bag"></i></button>
           {% else %}
-            <a href="{% url 'buy-now' product.id %}" class="product-btn buy bg-danger"> Buy Now&nbsp;&nbsp; <i class="fas fa-shopping-bag"></i></a>
+            <a href="{% url 'buy-now' product.id %}" class="product-btn buy bg-danger"> Купить сейчас&nbsp;&nbsp; <i class="fas fa-shopping-bag"></i></a>
           {% endif %}
 
           <div class="my-4">
-            {% if product.stock == 0 %}
-              <span class="text-danger">Out of Stock!</span>
+            {% if product.stock_quantity == 0 %}
+              <span class="text-danger">Не в продаже!</span>
               {% else %}
-              {% if product.stock < 11 %}
-              <span style="color: rgb(185, 158, 2);">Hurry Up! Only {{product.stock}} left!</span>
+              {% if product.stock_quantity < 11 %}
+              <span style="color: rgb(185, 158, 2);">Спешите! Только {{product.stock_quantity}} осталось!</span>
               {% else %}
-                <span class="text-success">In Stock</span>
+                <span class="text-success">В продаже</span>
               {% endif %}
             {% endif %}
           </div>
         </div>
 
         <div class="product-detail col-sm-6 offset-sm-1">
-          <h2>{{product.title}}</h2>
+          <h2>{{product.name}}</h2>
           <hr />
 
           <div class="collapse" id="productDescription">
@@ -92,12 +92,12 @@
               onclick="changeText()"
               id="readmore-btn"
             >
-              Read More
+              Читать больше
             </a>
           </p>
 
           <hr />
-          <h5>Available Offers</h5>
+          <h5>Доступные предложения</h5>
           <ul>
             <li>
               Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit
@@ -123,10 +123,10 @@
   <script>
     var collapse = document.getElementById("productDescription");
     collapse.addEventListener("show.bs.collapse", () => {
-      document.getElementById("readmore-btn").innerHTML = "Read Less";
+      document.getElementById("readmore-btn").innerHTML = "Скрыть;
     });
     collapse.addEventListener("hide.bs.collapse", () => {
-      document.getElementById("readmore-btn").innerHTML = "Read More";
+      document.getElementById("readmore-btn").innerHTML = "Скрыть";
     });
   </script>
 {% endblock custom_js %}

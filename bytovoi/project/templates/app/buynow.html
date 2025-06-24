@@ -56,30 +56,28 @@
             <h3>Общая сумма</h3>
             <ul class="list-group">
               <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                Сумма<span> <span id="total-amount">{{amounts.totalamount}}</span></span>
+                Сумма <span> <span id="total-amount">{{ amounts.totalamount }}</span> </span>
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
-                Перевозки<span> <span id="shipping-amount">{{amounts.shippingamount}}</span></span>
+                Перевозки <span> <span id="shipping-amount">{{ amounts.shippingamount }}</span> </span>
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                 <div>
                   <strong>Общая сумма</strong> <small></small>
                 </div>
-                <span><strong><span id="final-amount">{{amounts.finalamount}}</span></strong>
+                <span><strong><span id="final-amount">{{ amounts.finalamount }}</span></strong></span>
               </li>
             </ul>
 
-            <form action="/buynowcheckout/" method="POST" id="checkout-form">
+            <form action="{% url 'buynowcheckout' product_id=product.id %}" method="POST" id="checkout-form">
               {% csrf_token %}
-
-              <input name="prod_id" id="product_id" type="text" class="d-none bg-warning" value="{{product.id}}">
-              <input name="prod_quant" id="prod_quant" type="text" class="d-none bg-warning" value="{{quantity}}">
+              <input name="prod_id" id="product_id" type="text" class="d-none bg-warning" value="{{ product.id }}">
+              <input name="prod_quant" id="prod_quant" type="text" class="d-none bg-warning" value="{{ quantity }}">
 
               <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Разместить заказ</button>
               </div>
             </form>
-            
           </div>
         </div>
       </div>
@@ -132,6 +130,34 @@
       totalAmtEl.innerText = totalAmt;
       finalAmtEl.innerText = finalAmt;
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const quantityDisplay = document.getElementById('quantity');
+    const plusButton = document.querySelector('.plus-item');
+    const minusButton = document.querySelector('.minus-item');
+
+    // Увеличение количества
+    plusButton.addEventListener('click', function() {
+      let quantity = parseInt(quantityDisplay.textContent);
+      quantityDisplay.textContent = quantity + 1;
+      updateQuantityInput(quantity + 1);  // Обновляем скрытое поле в форме
+    });
+
+    // Уменьшение количества
+    minusButton.addEventListener('click', function() {
+      let quantity = parseInt(quantityDisplay.textContent);
+      if (quantity > 1) {
+        quantityDisplay.textContent = quantity - 1;
+        updateQuantityInput(quantity - 1);  // Обновляем скрытое поле в форме
+      }
+    });
+
+    // Обновление скрытого поля для отправки на сервер
+    function updateQuantityInput(newQuantity) {
+      const quantityInput = document.getElementById('prod_quant');
+      quantityInput.value = newQuantity;
+    }
+  });
 
 
   </script>

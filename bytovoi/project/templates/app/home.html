@@ -105,7 +105,7 @@
         {% for product in products %}
 
         <div class="product-card">
-          <a href="" class="product-card-btn">
+          <a href="{% url 'productdetail' product_id=product.id %}" class="product-card-btn">
             <div class="item">
               <div class="item-img">
                 <img src="{{ product.image.url }}" alt="" />

@@ -5,7 +5,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{% static 'app/css/form-page.css' %}" />
 {% endblock custom_css %}
-{% block title %}Login{% endblock title %}
+{% block title %}Логин{% endblock title %}
 
 {% block main-content %}
   <!-- Start Main Container -->
@@ -21,7 +21,7 @@
 
       <!-- Start Form -->
       <form action="" method="post" class="form" novalidate>
-        <span class="form-title">Sign In</span>
+        <span class="form-title">Войти</span>
 
         {% csrf_token %}
 
@@ -56,25 +56,25 @@
         <div class="container-form-showpassword">
           <div onclick="togglePW()">
             <input type="checkbox" onclick="togglePW()" />
-            <span>Show Password</span>
+            <span>Показать пароль</span>
           </div>
         </div>
 
         <!-- Submit Button -->
         <div class="container-form-btn">
-          <input type="submit" class="form-btn" value="Log In" />
+          <input type="submit" class="form-btn" value="Войти" />
         </div>
 
         <!-- Forgot Password Link div -->
         <div class="text-center p-t-12">
-          <a class="txt1" href="{% url 'resetpassword' %}">Forgot Username / Password? </a>
+          <a class="txt1" href="{% url 'resetpassword' %}">Забыли пароль?</a>
         </div>
 
         <!-- Create Account Link div -->
         <div class="text-center p-t-50">
-          <span class="txt1">Don't have an Account?</span>
-          <a class="txt1" href="{% url 'customerregistration' %}">
-            Create one here
+          <span class="txt1">Нет аккаунта?</span>
+          <a class="txt1" href="">
+            Создать здесь
             <i class="fa fa-arrow-right m-l-5" aria-hidden="true"></i>
           </a>
         </div>

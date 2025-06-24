@@ -45,7 +45,7 @@ def course_modules_view(request, course_id):
     if enrollment.accepted:  # Можно убрать проверку accepted, если нет такого поля
         course = get_object_or_404(ElectiveCourse, id=course_id)
         modules = course.modules.all()
-        return render(request, 'cities.html', {
+        return render(request, 'index1.html', {
             'course': course,
             'modules': modules
         })
