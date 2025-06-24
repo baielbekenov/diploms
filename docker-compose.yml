@@ -56,5 +56,16 @@ services:
     working_dir: /app
     command: gunicorn main.wsgi:application --bind 0.0.0.0:3712
 
+  bytovoi:
+    build:
+      context: ./bytovoi
+    container_name: bytovoi
+    ports:
+      - "4466:4466"
+    #    volumes:
+    #      - ./bytovoi/db.sqlite3:/app/db.sqlite3
+    working_dir: /app
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:4466
+
 
     #  https://app-generator.dev/docs/products/django-libs/theme-soft-dashboard.html
