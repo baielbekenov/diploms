@@ -1,0 +1,132 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block custom_css %}
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'app/css/product.css' %}" />
+{% endblock custom_css %}
+{% block title %}{{product.title}}{% endblock title %}
+
+{% block main-content %}
+  <!-- Start Main Container -->
+  <div class="main-container">
+    <div class="container">
+      <div class="row">
+        <div class="product-img col-sm-5 text-center">
+          <img
+            src="{{product.product_image.url}}"
+            alt=""
+            class="img-fluid img-thumbnail"
+          />
+
+          <h4>
+             {{product.discounted_price}} сом
+            <small class="fw-light text-decoration-line-through">
+              {{product.selling_price}}
+            </small>
+          </h4>
+
+          <form action="/add-to-cart" class="d-inline">
+            <input type="hidden" name="product_id" value="{{product.id}}" id="product_id">
+              {% if request.user.is_authenticated %}
+                {% if cart_state %}
+                  <button type="submit" class="product-btn cart bg-secondary">
+                    Go to Cart&nbsp;&nbsp;
+                {% else %}
+                  <!-- Stock Validation -->
+                  {% if product.stock == 0 %}
+                    <button type="submit" class="product-btn btn disabled cart bg-primary">
+                      Добавить в корзину&nbsp;&nbsp;
+                  {% else %}
+                    <button type="submit" class="product-btn cart bg-primary">
+                      Добавить в корзину&nbsp;&nbsp;
+                  {% endif %}
+                {% endif %}
+              {% else %}
+                <!-- Stock Validation -->
+                {% if product.stock == 0 %}
+                  <button type="submit" class="product-btn btn disabled cart bg-primary">
+                    Добавить в корзину&nbsp;&nbsp;
+                {% else %}
+                  <button type="submit" class="product-btn cart bg-primary">
+                    Добавить в корзину&nbsp;&nbsp;
+                {% endif %}
+              {% endif %}
+              <i class="fas fa-shopping-cart"> </i>
+            </button>
+          </form>
+
+          {% if product.stock == 0 %}
+            <button type="button" class="product-btn btn buy bg-danger disabled"> Buy Now&nbsp;&nbsp; <i class="fas fa-shopping-bag"></i></button>
+          {% else %}
+            <a href="{% url 'buy-now' product.id %}" class="product-btn buy bg-danger"> Buy Now&nbsp;&nbsp; <i class="fas fa-shopping-bag"></i></a>
+          {% endif %}
+
+          <div class="my-4">
+            {% if product.stock == 0 %}
+              <span class="text-danger">Out of Stock!</span>
+              {% else %}
+              {% if product.stock < 11 %}
+              <span style="color: rgb(185, 158, 2);">Hurry Up! Only {{product.stock}} left!</span>
+              {% else %}
+                <span class="text-success">In Stock</span>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="product-detail col-sm-6 offset-sm-1">
+          <h2>{{product.title}}</h2>
+          <hr />
+
+          <div class="collapse" id="productDescription">
+            <pre>{{product.description}}</pre>
+          </div>
+
+          <p class="mb-5">
+            <a
+              data-bs-toggle="collapse"
+              href="#productDescription"
+              aria-expanded="false"
+              aria-controls="productDescription"
+              onclick="changeText()"
+              id="readmore-btn"
+            >
+              Read More
+            </a>
+          </p>
+
+          <hr />
+          <h5>Available Offers</h5>
+          <ul>
+            <li>
+              Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit
+            </li>
+            <li>
+              Special Price Get extra 3000 сом off (price inclusive of
+              discount)
+            </li>
+            <li>No cost EMI 1,667 сом/month. Standard EMI also available</li>
+            <li>
+              Partner Offer 2000 сом Flipkart Gift Card on Every 1000th
+              Transaction with a new Visa Debit/Credit Card
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Main Container -->
+{% endblock main-content %}
+
+{% block custom_js %}
+  <script>
+    var collapse = document.getElementById("productDescription");
+    collapse.addEventListener("show.bs.collapse", () => {
+      document.getElementById("readmore-btn").innerHTML = "Read Less";
+    });
+    collapse.addEventListener("hide.bs.collapse", () => {
+      document.getElementById("readmore-btn").innerHTML = "Read More";
+    });
+  </script>
+{% endblock custom_js %}
