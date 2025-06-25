@@ -4,6 +4,8 @@ from .models import *
 admin.site.register(Category)
 admin.site.register(Supplier)
 admin.site.register(Product)
+admin.site.register(Cart)
+admin.site.register(CartItems)
 admin.site.register(Customer)
 admin.site.register(Employee)
 admin.site.register(Sale)

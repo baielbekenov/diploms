@@ -108,26 +108,56 @@ class Supply(models.Model):
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Пользователь')
+    total_cart_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Общая стоимость корзины',
+                                           default=0)
+    total_cart_weight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Общий вес корзины (гр)',
+                                            default=0)
+    created_at = models.DateField(auto_now_add=True, verbose_name='Дата создание')
 
-    def __str__(self):
-        return f"Cart for {self.user.username}"
+    class Meta:
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзины'
+        constraints = [
+            models.UniqueConstraint(fields=['user_id'], name='unique_cart_per_user')
 
-    # Метод для получения общей суммы в корзине
-    def total_amount(self):
-        total = sum(item.total_price() for item in self.items.all())
-        return total
+        ]
+
+    def calculate_total_price(self):
+        return sum(item.total_item_price for item in self.cartitems.all())
+
+    def calculate_total_weight(self):
+        return sum(item.total_item_weight for item in self.cartitems.all())
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super().save(*args, **kwargs)
+        self.total_cart_price = self.calculate_total_price()
+        self.total_cart_weight = self.calculate_total_weight()
+        return super().save(update_fields=['total_cart_price', 'total_cart_weight'])
 
 
-class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, related_name="items", on_delete=models.CASCADE)
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)  # Предположим, что есть модель Product
-    quantity = models.PositiveIntegerField(default=1)
+class CartItems(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name='Корзина', related_name='cartitems')
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Продукт')
+    quantity = models.PositiveIntegerField(verbose_name='Количество', default=0)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0,
+                                verbose_name='Цена товара')
+    weight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Вес (гр)', default=0)
+    total_item_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Итоговая стоимость позиции',
+                                           default=0)
+    total_item_weight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Итоговый вес позиции',
+                                           default=0)
+    created_at = models.DateField(auto_now_add=True, verbose_name='Дата создание')
 
-    def total_price(self):
-        return self.product.price * self.quantity
+    class Meta:
+        verbose_name = 'ТоварВКорзине'
+        verbose_name_plural = 'ТоварыВКорзине'
+        ordering = ['-created_at']
 
-    def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
+    def save(self, *args, **kwargs):
+        self.total_item_price = self.quantity * self.price
+        self.total_item_weight = self.quantity * self.weight
+        print(f"Saving CartItem: {self.id}, Total Item Weight: {self.total_item_weight}")
+        super().save(*args, **kwargs)
+

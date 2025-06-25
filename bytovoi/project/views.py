@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Product, Cart
+from .models import Product, Cart, CartItems
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.http import HttpResponseBadRequest
 from django.core.mail import send_mail, BadHeaderError
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
@@ -13,7 +14,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 
 
-def index(request):
+def home(request):
     products = Product.objects.select_related('category').all()
     return render(request, 'app/home.html', {'products': products})
 
@@ -137,6 +138,111 @@ def buynow(request, product_id):
                 'finalamount': final_amount,
             }
         })
+
+
+# Расчёт итоговой суммы
+def calculate_cart_totals(cart):
+    items = cart.cartitems.all()
+    # Вместо того, чтобы использовать total_item_price, считаем вручную по quantity и price
+    amount = sum(item.quantity * item.price for item in items)
+    shipping = 200 if amount > 0 else 0
+    final = amount + shipping
+    return {
+        'totalamount': amount,
+        'shippingamount': shipping,
+        'finalamount': final
+    }
+
+# Отображение корзины
+@login_required
+def cart_view(request):
+    try:
+        cart = Cart.objects.get(user_id=request.user)
+        items = cart.cartitems.select_related('product')  # оптимизация
+        cartempty = not items.exists()
+        amounts = calculate_cart_totals(cart)
+    except Cart.DoesNotExist:
+        cart = None
+        items = []
+        cartempty = True
+        amounts = {
+            'totalamount': 0,
+            'shippingamount': 0,
+            'finalamount': 0
+        }
+
+    context = {
+        'cart': cart,
+        'items': items,
+        'cartempty': cartempty,
+        'amounts': amounts
+    }
+    return render(request, 'app/addtocart.html', context)
+
+
+@login_required
+def add_to_cart(request):
+    if request.method == 'POST':
+        prod_id = request.POST.get('product_id')
+        product = get_object_or_404(Product, id=prod_id)
+
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        cart_item, created = CartItems.objects.get_or_create(cart=cart, product=product)
+
+        if created:
+            cart_item.price = product.discounted_price or product.price  # если есть скидка — берем её
+            cart_item.weight = 500  # или product.weight, если у тебя есть это поле
+        else:
+            cart_item.quantity += 1
+
+        cart_item.save()  # пересчитает total_item_price и total_item_weight
+        return redirect('cart')
+
+    return redirect('home')  # или главная страница, если метод не POST
+
+
+# Увеличить количество
+@login_required
+def plus_cart(request):
+    if request.method == 'GET':
+        prod_id = request.GET['prod_id']
+        cart = Cart.objects.get(product__id=prod_id, user=request.user)
+        cart.quantity += 1
+        cart.save()
+
+        data = {
+            'quantity': cart.quantity,
+            **calculate_cart_totals(request.user)
+        }
+        return JsonResponse(data)
+
+# Уменьшить количество
+@login_required
+def minus_cart(request):
+    if request.method == 'GET':
+        prod_id = request.GET['prod_id']
+        cart = Cart.objects.get(product__id=prod_id, user=request.user)
+        if cart.quantity > 1:
+            cart.quantity -= 1
+            cart.save()
+        else:
+            cart.delete()
+
+        data = {
+            'quantity': cart.quantity if cart.quantity > 0 else 0,
+            **calculate_cart_totals(request.user)
+        }
+        return JsonResponse(data)
+
+# Удалить из корзины
+@login_required
+def remove_cart(request):
+    if request.method == 'GET':
+        prod_id = request.GET['prod_id']
+        Cart.objects.get(product__id=prod_id, user=request.user).delete()
+        data = calculate_cart_totals(request.user)
+        return JsonResponse(data)
+
 
 
 def product_detail(request, product_id):

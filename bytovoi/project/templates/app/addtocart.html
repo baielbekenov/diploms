@@ -4,45 +4,45 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{% static 'app/css/cart.css' %}" />
 {% endblock custom_css %}
-{% block title %}Cart{% endblock title %}
+{% block title %}Корзина{% endblock title %}
 
 {% block main-content %}
   <div class="container my-5">
     <div class="row">
-      <h1 class="text-center mb-5">Shopping Cart</h1>
+      <h1 class="text-center mb-5">Корзина магазина</h1>
       <div class="col-sm-8">
         <div class="card">
           <div class="card-body">
-              {% for cart in carts %}
+              {% for item in items %}
                 <div class="row">
                   <div class="col-sm-3 text-center align-self-center">
-                    <a href="{% url 'product-detail' cart.product.id %}">
-                      <img src="{{cart.product.product_image.url}}" alt="" srcset="" class="img-fluid img-thumbnail border-0 my-5" height="150" width="150">
+                    <a href="{% url 'productdetail' item.product.id %}">
+                      <img src="{{item.product.image.url}}" alt="" srcset="" class="img-fluid img-thumbnail border-0 my-5" height="150" width="150">
                     </a>
                   </div>
 
                   <div class="col-sm-9">
                     <div>
-                      <h6 class="fw-bold">{{cart.product.title}}</h6>
+                      <h6 class="fw-bold">{{ item.product.name }}</h6>
                       <p class="mb-2 text-muted small">
-                        Описание: <pre>{{cart.product.description}}</pre>
+                        Описание: <pre></pre>
                       </p>
                       <div class="my-3">
                         <label for="quantity">Колличество:</label>
-                        <a class="minus-cart btn" pid="{{cart.product.id}}">
+                        <a class="minus-cart btn" pid="{{item.product.id}}">
                           <i class="fas fa-minus-square fa-lg"></i>
                         </a>
-                        <span id="quantity">{{cart.quantity}}</span>
-                        <a class="plus-cart btn" pid="{{cart.product.id}}">
+                        <span id="quantity">{{ item.quantity }}</span>
+                        <a class="plus-cart btn" pid="{{item.product.id}}">
                           <i class="fas fa-plus-square fa-lg"></i>
                         </a>
                       </div> 
                       <div class="d-flex justify-content-between">
-                        <a class="btn btn-sm btn-secondary shadow-none mr-3 delete-cart" pid="{{cart.product.id}}">
+                        <a class="btn btn-sm btn-secondary shadow-none mr-3 delete-cart" pid="{{item.product.id}}">
                           <i class="fa fa-trash"></i>
                         </a>
                         <p class="mb-0">
-                          <span><strong> {{cart.product.discounted_price}} сом</strong></span>
+                          <span><strong> {{item.product.discounted_price}} сом</strong></span>
                         </p>
                       </div>
                     </div>
@@ -51,7 +51,7 @@
                 <hr class="text-muted my-4">
 
                 {% empty %}
-                  <div>No items present</div>
+                  <div>Ваша корзина пуста</div>
               {% endfor %}
           </div>
         </div>
@@ -80,7 +80,7 @@
                 </li>
               </ul>
               <div class="d-grid">
-                <a href="{% url 'checkout' %}" class="btn btn-primary">Place Order</a>
+                <a href="" class="btn btn-primary">Оформить заказ</a>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@
     <div class="col-sm-8">
     <div class="card">
       <div class="card-body">
-        <h5 class="mb-4">We accept</h5>
+        <h5 class="mb-4">Мы принимаем</h5>
         <img src="{% static 'app/images/payment.png' %}" alt="" class="img-fluid">
       </div>
     </div>
@@ -105,5 +105,65 @@
 {% endblock main-content %}
 
 {% block custom_js %}
-  <script src="{% static 'app/js/cart.js' %}"></script>
+  <script src="{% static 'app/js/cart.js' %}">
+      // Увеличить
+    $(".plus-cart").click(function () {
+        var id = $(this).attr("pid");
+        var element = this.parentNode.children[1];
+
+        $.ajax({
+            type: "GET",
+            url: "/pluscart",
+            data: {
+                prod_id: id
+            },
+            success: function (data) {
+                element.innerText = data.quantity;
+                $('#total-amount').text(data.totalamount);
+                $('#shipping-amount').text(data.shippingamount);
+                $('#final-amount').text(data.finalamount);
+            }
+        });
+    });
+
+    // Уменьшить
+    $(".minus-cart").click(function () {
+        var id = $(this).attr("pid");
+        var element = this.parentNode.children[1];
+
+        $.ajax({
+            type: "GET",
+            url: "/minuscart",
+            data: {
+                prod_id: id
+            },
+            success: function (data) {
+                element.innerText = data.quantity;
+                $('#total-amount').text(data.totalamount);
+                $('#shipping-amount').text(data.shippingamount);
+                $('#final-amount').text(data.finalamount);
+            }
+        });
+    });
+
+    // Удалить
+    $(".delete-cart").click(function () {
+        var id = $(this).attr("pid");
+        var row = $(this).closest('.row');
+
+        $.ajax({
+            type: "GET",
+            url: "/removecart",
+            data: {
+                prod_id: id
+            },
+            success: function (data) {
+                row.remove();
+                $('#total-amount').text(data.totalamount);
+                $('#shipping-amount').text(data.shippingamount);
+                $('#final-amount').text(data.finalamount);
+            }
+        });
+    });
+  </script>
 {% endblock custom_js %}

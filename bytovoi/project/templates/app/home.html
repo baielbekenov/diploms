@@ -118,9 +118,10 @@
               </div>
 
               <div class="btn-container">
-                <form action="/add-to-cart" class="d-inline-block">
-                  <input type="hidden" name="product_id" value="" id="product_id">
-                  <button type="submit" href="" class="btn btn-primary shadow-none">
+                <form action="{% url 'addtocart' %}" method="post" class="d-inline-block">
+                  {% csrf_token %}
+                  <input type="hidden" name="product_id" value="{{ product.id }}">
+                  <button type="submit" class="btn btn-primary shadow-none">
                     <span>Добавить в корзину</span>&nbsp;&nbsp;
                     <i class="fas fa-shopping-cart"></i>
                   </button>
