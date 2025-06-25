@@ -1,11 +1,13 @@
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Product, Cart, CartItems
+from .models import Product, Cart, CartItems, Category, Order, OrderDetail
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from django.http import HttpResponseBadRequest
+import uuid
 from django.core.mail import send_mail, BadHeaderError
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
@@ -17,6 +19,21 @@ from django.conf import settings
 def home(request):
     products = Product.objects.select_related('category').all()
     return render(request, 'app/home.html', {'products': products})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Аккаунт успешно создан! Теперь вы можете войти.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки ниже.')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'app/customerregistration.html', {'form': form})
 
 
 def user_login(request):
@@ -70,6 +87,18 @@ def reset_password_request(request):
     else:
         form = PasswordResetForm()
     return render(request, "app/reset_password.html", {"form": form})
+
+def search_products(request):
+    query = request.GET.get('search')
+    products = []
+
+    if query:
+        products = Product.objects.filter(name__icontains=query)  # или title__icontains, если у тебя title
+
+    return render(request, 'app/search.html', {
+        'query': query,
+        'products': products,
+    })
 
 
 @login_required
@@ -140,6 +169,31 @@ def buynow(request, product_id):
         })
 
 
+def products_by_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    products = Product.objects.filter(category=category)
+    return render(request, 'app/products_by_category.html', {
+        'category': category,
+        'products': products,
+    })
+
+
+@login_required
+def orders(request):
+    # Получаем все заказы текущего пользователя
+    orders = Order.objects.filter(customer=request.user).order_by('-ordered_date')
+
+    # Для каждого заказа находим его детали (товары)
+    order_details = []
+    for order in orders:
+        details = OrderDetail.objects.filter(order=order)
+        order_details.append(details)
+
+    return render(request, 'app/orders.html', {
+        'order_details': order_details
+    })
+
+
 # Расчёт итоговой суммы
 def calculate_cart_totals(cart):
     items = cart.cartitems.all()
@@ -199,6 +253,43 @@ def add_to_cart(request):
         return redirect('cart')
 
     return redirect('home')  # или главная страница, если метод не POST
+
+
+@login_required
+def create_order(request):
+    try:
+        cart = Cart.objects.get(user=request.user)
+        cart_items = CartItems.objects.filter(cart=cart)
+
+        if not cart_items.exists():
+            # Корзина пустая — не создаём заказ
+            return redirect('cart')  # или показать сообщение
+
+        # Создание заказа
+        order = Order.objects.create(
+            customer=request.user,
+            order_id=str(uuid.uuid4()).replace('-', '').upper()[:12],
+            txn_id=str(uuid.uuid4())[:16],  # можно заменить, если платёжная система своя
+            ordered_date=timezone.now(),
+            status='Pending'
+        )
+
+        # Создание деталей заказа
+        for item in cart_items:
+            OrderDetail.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                # invoice можешь добавить позже, если нужно
+            )
+
+        # Очистка корзины
+        cart_items.delete()
+
+        return redirect('orders')  # или на страницу "Спасибо за заказ"
+
+    except Cart.DoesNotExist:
+        return redirect('cart')
 
 
 # Увеличить количество

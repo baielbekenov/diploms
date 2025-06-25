@@ -26,7 +26,8 @@
             </small>
           </h4>
 
-          <form action="/add-to-cart" class="d-inline">
+          <form action="{% url 'addtocart' %}" method="post" class="d-inline">
+            {% csrf_token %}
             <input type="hidden" name="product_id" value="{{product.id}}" id="product_id">
               {% if request.user.is_authenticated %}
                 {% if cart_state %}
@@ -100,16 +101,15 @@
           <h5>Доступные предложения</h5>
           <ul>
             <li>
-              Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit
+              Банковское предложение 5% безлимитный кэшбэк на Flipkart Axis Bank Credit
             </li>
             <li>
-              Special Price Get extra 3000 сом off (price inclusive of
-              discount)
+              Специальная цена Получите дополнительную скидку 3000 сом (цена указана с учетом скидки)
             </li>
-            <li>No cost EMI 1,667 сом/month. Standard EMI also available</li>
+            <li>Бесплатная EMI 1,667 сом/мес. Также доступна стандартная EMI</li>
             <li>
-              Partner Offer 2000 сом Flipkart Gift Card on Every 1000th
-              Transaction with a new Visa Debit/Credit Card
+                Партнерское предложение 2000 сом Flipkart Подарочная карта на каждую 1000-ю
+                Транзакция с новой дебетовой/кредитной картой Visa
             </li>
           </ul>
         </div>

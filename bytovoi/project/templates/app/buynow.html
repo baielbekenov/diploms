@@ -75,7 +75,7 @@
               <input name="prod_quant" id="prod_quant" type="text" class="d-none bg-warning" value="{{ quantity }}">
 
               <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Разместить заказ</button>
+                <a href="{% url 'create_order' %}" class="btn btn-primary">Оформить заказ</a>
               </div>
             </form>
           </div>

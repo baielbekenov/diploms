@@ -5,7 +5,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{% static 'app/css/form-page.css' %}" />
 {% endblock custom_css %}
-{% block title %}Sign Up{% endblock title %}
+{% block title %}Регистрация{% endblock title %}
 
 {% block main-content %}
   <!-- Start Main Container -->
@@ -15,7 +15,7 @@
 
       <!-- Start Form -->
       <form action="" method="post" class="form" novalidate>
-        <span class="form-title">Create Account</span>
+        <span class="form-title">Создать аккаунт</span>
 
         <!-- Django message -->
         {% if messages %}
@@ -67,20 +67,20 @@
         <div class="container-form-showpassword">
           <div onclick="togglePW()">
             <input type="checkbox" onclick="togglePW()" />
-            <span>Show Password</span>
+            <span>Показать пароль</span>
           </div>
         </div>
 
         <!-- Submit Button -->
         <div class="container-form-btn">
-          <input type="submit" class="form-btn" value="Register" />
+          <input type="submit" class="form-btn" value="Регистрация" />
         </div>
 
         <!-- Login Link div -->
         <div class="text-center p-t-50">
-          <span class="txt2">Already have an Account?</span><br/>
+          <span class="txt2">Уже есть аккаунт?</span><br/>
           <a class="txt2" href="{% url 'login' %}">
-            Login here
+            Войти тут
             <i class="fa fa-arrow-right m-l-5" aria-hidden="true"></i>
           </a>
         </div>

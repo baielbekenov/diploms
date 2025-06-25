@@ -16,20 +16,20 @@
             {% for order_detail in order_details %}
               {% for order in order_detail %}
                 <div class="col-sm-2">
-                  <img src="{{order.product.product_image.url}}" alt="" class="img-fluid" height="150" width="150">
+                  <img src="{{order.product.image.url}}" alt="" class="img-fluid" height="150" width="150">
                 </div>
                 <div class="col-sm-7">
                   <h6 class="fw-light">
-                    <a href="{% url 'product-detail' order.product.id %}">{{order.product.title}}</a>
+                    <a href="{% url 'productdetail' order.product.id %}">{{order.product.title}}</a>
                   </h6>
                   <span><span class="fw-bold">Колличество:</span> {{order.quantity}}</span><br>
-                  <span><span class="fw-bold">Order Date:</span> {{order.order.ordered_date}}</span><br>
-                  <span><span class="fw-bold">Ordered By:</span> {{order.order.customer.name}}</span><br>
-                  <span><span class="fw-bold">Status:</span> {{order.order.status}}</span><br>
-                  {% comment %} <span><span class="fw-bold">Price:</span> {{order.total_cost}}</span><br> {% endcomment %}
-                  <span><span class="fw-bold">Txn ID:</span> {{order.order.txn_id}}</span><br>
-                  <span><span class="fw-bold">Order ID:</span> {{order.order.order_id}}</span><br>
-                  <span><a href="{{order.invoice.url}}" target="_blank">Download Invoice</a></span><br>
+                  <span><span class="fw-bold">Дата заказа:</span> {{order.order.ordered_date}}</span><br>
+                  <span><span class="fw-bold">Имя:</span> {{order.order.user.name}}</span><br>
+                  <span><span class="fw-bold">Статус:</span> {{order.order.status}}</span><br>
+                  {% comment %} <span><span class="fw-bold">Цена:</span> {{order.total_cost}}</span><br> {% endcomment %}
+                  <span><span class="fw-bold">Идентификатор:</span> {{order.order.txn_id}}</span><br>
+                  <span><span class="fw-bold">ID заказа:</span> {{order.order.order_id}}</span><br>
+                  <span><a href="" target="_blank">Скачать счетфактуру</a></span><br>
                 </div>
                 
                 <div class="col-sm-3 pt-5">

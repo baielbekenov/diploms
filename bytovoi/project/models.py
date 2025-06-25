@@ -19,6 +19,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Supplier(models.Model):
     name = models.CharField("Название поставщика", max_length=150)
     phone = models.CharField("Телефон", max_length=20, blank=True)
@@ -31,6 +32,32 @@ class Supplier(models.Model):
 
     def __str__(self):
         return self.name
+
+
+ORDER_STATUS_CHOICES = [
+    ('Pending', 'Pending'),
+    ('Accepted', 'Accepted'),
+    ('Packed', 'Packed'),
+    ('On The Way', 'On The Way'),
+    ('Delivered', 'Delivered'),
+    ('Cancel', 'Cancel'),
+]
+
+
+class Order(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Клиент")  # или своя модель Customer
+    order_id = models.CharField(max_length=100, unique=True, verbose_name="Номер заказа")
+    txn_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="Идентификатор")
+    ordered_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата заказа")
+    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='Pending', verbose_name="Статус")
+
+    def __str__(self):
+        return f"Order {self.order_id} by {self.customer.username}"
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+
 
 class Product(models.Model):
     name = models.CharField("Название товара", max_length=200)
@@ -49,6 +76,26 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class OrderDetail(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items', verbose_name="Заказ")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Товар")
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Количество")
+    invoice = models.FileField(upload_to='invoices/', blank=True, null=True, verbose_name="Cчетфактура")  # PDF или другой файл
+
+    class Meta:
+        verbose_name = "Деталь заказа"
+        verbose_name_plural = "Детали заказа"
+
+    def __str__(self):
+        return f"{self.product.name} x {self.quantity}"
+
+    @property
+    def total_cost(self):
+        # если у товара есть price, можешь использовать:
+        return self.product.price * self.quantity if hasattr(self.product, 'price') else 0
+
 
 class Customer(models.Model):
     full_name = models.CharField("ФИО клиента", max_length=150)
