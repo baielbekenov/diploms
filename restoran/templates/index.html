@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Меню ресторана</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f172a;
+    color: #fff;
+}
+
+.header {
+    padding: 16px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.categories {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 10px 10px;
+}
+
+.cat-btn {
+    background: #1e293b;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    color: white;
+    white-space: nowrap;
+}
+
+.cat-btn.active {
+    background: #22c55e;
+}
+
+.menu {
+    padding: 10px;
+}
+
+.card {
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+    margin: 0 0 8px;
+}
+
+.price {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #38bdf8;
+}
+
+.btn {
+    background: #22c55e;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    width: 100%;
+    font-size: 14px;
+}
+
+.cart-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #020617;
+    padding: 12px;
+    border-top: 1px solid #334155;
+}
+
+.cart-btn {
+    width: 100%;
+    background: #f59e0b;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 16px;
+    color: #000;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="header">🍽 Меню</div>
+
+<div class="categories">
+    <button class="cat-btn active" onclick="filterMenu('all', this)">Все</button>
+    <button class="cat-btn" onclick="filterMenu('блюда', this)">Блюда</button>
+    <button class="cat-btn" onclick="filterMenu('пицца', this)">Пицца</button>
+    <button class="cat-btn" onclick="filterMenu('бургер', this)">Бургеры</button>
+    <button class="cat-btn" onclick="filterMenu('шаурма', this)">Шаурма</button>
+</div>
+
+<div id="menu" class="menu"></div>
+
+<div class="cart-bar">
+    <button class="cart-btn" onclick="sendOrder()">Отправить заказ</button>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+let userId = null;
+let cart = [];
+let allItems = [];
+
+fetch("/api/auth/telegram/", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ initData: tg.initData })
+})
+.then(res => res.json())
+.then(data => {
+    userId = data.user_id;
+});
+
+fetch("/api/menu/")
+.then(res => res.json())
+.then(data => {
+    allItems = data;
+    renderMenu(data);
+});
+
+function renderMenu(data) {
+    const menu = document.getElementById("menu");
+    menu.innerHTML = "";
+
+    data.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "card";
+        el.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" style="width:100%; border-radius:12px; margin-bottom:10px; height:150px; object-fit:cover;">
+            <h3>${item.name}</h3>
+            <div class="price">${item.price} сом</div>
+            <button class="btn" onclick="addToCart(${item.id}, ${item.price})">Добавить</button>
+        `;
+        menu.appendChild(el);
+    });
+}
+
+function filterMenu(category, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (category === 'all') {
+        renderMenu(allItems);
+    } else {
+        const filtered = allItems.filter(item => item.category === category);
+        renderMenu(filtered);
+    }
+}
+
+function addToCart(id, price) {
+    const existing = cart.find(i => i.menu_item === id);
+
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({
+            menu_item: id,
+            quantity: 1,
+            price: price
+        });
+    }
+
+    tg.showAlert("Добавлено в корзину");
+}
+
+function sendOrder() {
+    if (cart.length === 0) {
+        tg.showAlert("Корзина пустая");
+        return;
+    }
+
+    fetch("/api/orders/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            user: userId,
+            items: cart
+        })
+    }).then(() => {
+        tg.showAlert("Заказ отправлен");
+        cart = [];
+    });
+}
+</script>
+
+</body>
+</html>
