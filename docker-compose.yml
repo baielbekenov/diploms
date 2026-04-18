@@ -17,12 +17,12 @@ services:
     build:
       context: ./restoran
     container_name: restoran
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:6000
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:5555
     volumes:
       - ./restoran:/app
       - restoran_volume:/app/staticfiles
     ports:
-      - "6000:6000"
+      - "5555:5555"
     restart: always
 
   toursite:

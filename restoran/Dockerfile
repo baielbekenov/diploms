@@ -26,7 +26,7 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 # Открываем порт
-EXPOSE 6000
+EXPOSE 5555
 
 # Команда запуска
-CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:6000"]
+CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:5555"]
