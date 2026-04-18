@@ -138,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app", "https://*.ngrok-free.dev",]
+CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app", "https://*.ngrok-free.dev", "https://trust-currencies-wearing-diamond.trycloudflare.com"]
 
 TELEGRAM_BOT_TOKEN = "8461162231:AAHjGse28mc2fghjHKej1asAzPA3TH_zsWI"
 
