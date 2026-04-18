@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Заказ принят</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #09090f; --bg2: #111119; --bg3: #18181f;
+  --gold: #c9a84c; --gold2: #e8c97a;
+  --text: #f0ede6; --muted: #888;
+  --border: rgba(201,168,76,.18); --r: 14px; --r2: 20px;
+}
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; padding: 24px;
+}
+.top {
+  text-align: center; padding: 32px 0 28px;
+}
+.icon {
+  font-size: 64px; margin-bottom: 20px;
+  display: block;
+  animation: pop .4s cubic-bezier(.32,1,.6,1);
+}
+@keyframes pop {
+  from { transform: scale(.5); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 600; margin-bottom: 8px;
+}
+.sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 20px; margin-bottom: 16px;
+}
+.card-title {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 14px;
+}
+.order-item {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.order-item:last-child { border-bottom: none; }
+.order-item-name { font-weight: 500; }
+.order-item-qty { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.order-item-price { color: var(--gold2); font-weight: 600; }
+
+.total-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 0;
+  font-size: 16px; font-weight: 600;
+}
+.total-label { color: var(--muted); font-weight: 400; }
+.total-val { color: var(--gold2); font-size: 20px; }
+
+.info-row {
+  display: flex; align-items: center;
+  gap: 10px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+.info-label { color: var(--muted); font-size: 12px; }
+.info-val { font-weight: 500; }
+
+.status-badge {
+  display: inline-block;
+  background: rgba(201,168,76,.15);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 4px 12px;
+  font-size: 12px; color: var(--gold2); font-weight: 500;
+}
+
+.home-btn {
+  display: block; width: 100%;
+  background: var(--gold); border: none;
+  padding: 15px; border-radius: var(--r);
+  font-size: 15px; font-family: 'DM Sans', sans-serif;
+  font-weight: 600; color: #09090f;
+  cursor: pointer; text-decoration: none;
+  text-align: center; margin-top: 8px;
+  transition: background .15s, transform .1s;
+}
+.home-btn:active { background: var(--gold2); transform: scale(.98); }
+.notice {
+  text-align: center; font-size: 12px;
+  color: var(--muted); margin-top: 14px; line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="icon">✅</span>
+  <h1>Заказ принят!</h1>
+  <p class="sub">Ожидайте уведомления в Telegram</p>
+</div>
+
+<!-- Информация о заказе -->
+<div class="card">
+  <div class="card-title">Заказ #{{ order.pk }}</div>
+
+  <div class="info-row">
+    <span class="info-icon">📌</span>
+    <div style="flex:1">
+      <div class="info-label">Статус</div>
+      <div class="info-val">
+        <span class="status-badge">{{ order.status }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="info-row">
+    <span class="info-icon">💳</span>
+    <div>
+      <div class="info-label">Оплата</div>
+      <div class="info-val">{{ order.get_payment_method_display }}</div>
+    </div>
+  </div>
+  {% if order.comment %}
+  <div class="info-row">
+    <span class="info-icon">📝</span>
+    <div>
+      <div class="info-label">Комментарий</div>
+      <div class="info-val">{{ order.comment }}</div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Позиции заказа -->
+<div class="card">
+  <div class="card-title">Состав заказа</div>
+
+  {% for item in order.items.all %}
+  <div class="order-item">
+    <div>
+      <div class="order-item-name">{{ item.menu_item.name }}</div>
+      <div class="order-item-qty">× {{ item.quantity }}</div>
+    </div>
+    <div class="order-item-price">{{ item.total_price|floatformat:0 }} сом</div>
+  </div>
+  {% endfor %}
+
+  <div class="total-row">
+    <span class="total-label">Итого</span>
+    <span class="total-val">{{ order.total_price|floatformat:0 }} сом</span>
+  </div>
+</div>
+
+<a href="/" class="home-btn">← Вернуться в меню</a>
+<p class="notice">Мы уведомим вас о статусе заказа<br>в Telegram</p>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.expand(); tg.setHeaderColor('#09090f'); }
+</script>
+</body>
+</html>

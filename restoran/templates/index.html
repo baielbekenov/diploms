@@ -5,202 +5,928 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Меню ресторана</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #09090f;
+  --bg2:      #111119;
+  --bg3:      #18181f;
+  --bg4:      #22222c;
+  --gold:     #c9a84c;
+  --gold2:    #e8c97a;
+  --text:     #f0ede6;
+  --muted:    #888;
+  --border:   rgba(201,168,76,.18);
+  --r:        14px;
+  --r2:       20px;
+}
+
+html { background: var(--bg); }
+
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0f172a;
-    color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 120px;
 }
 
+/* ─── HEADER ─── */
 .header {
-    padding: 16px;
-    font-size: 22px;
-    font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 18px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: linear-gradient(to bottom, var(--bg) 70%, transparent);
 }
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -.3px;
+  color: var(--text);
+}
+.header-sub {
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.cart-icon-btn {
+  position: relative;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 20px;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.cart-icon-btn:active { background: var(--bg4); transform: scale(.95); }
+.cart-badge {
+  position: absolute;
+  top: -3px; right: -3px;
+  background: var(--gold);
+  color: #0a0a0f;
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  display: none;
+}
+.cart-badge.visible { display: flex; }
 
+/* ─── CATEGORIES ─── */
+.categories-wrap {
+  padding: 4px 18px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.categories-wrap::-webkit-scrollbar { display: none; }
 .categories {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 0 10px 10px;
+  display: flex;
+  gap: 8px;
+  width: max-content;
 }
-
 .cat-btn {
-    background: #1e293b;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 20px;
-    color: white;
-    white-space: nowrap;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 40px;
+  color: var(--muted);
+  white-space: nowrap;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all .2s;
+  cursor: pointer;
+}
+.cat-btn.active,
+.cat-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #0a0a0f;
 }
 
-.cat-btn.active {
-    background: #22c55e;
+/* ─── SECTION LABEL ─── */
+.section-label {
+  padding: 4px 18px 12px;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
 }
 
+/* ─── MENU CARDS ─── */
 .menu {
-    padding: 10px;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .card {
-    background: #1e293b;
-    border-radius: 16px;
-    padding: 14px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform .15s, border-color .2s;
+}
+.card:active { transform: scale(.985); }
+.card:hover { border-color: rgba(201,168,76,.35); }
+
+.card-img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  display: block;
+  background: var(--bg3);
+}
+.card-img-placeholder {
+  width: 100%;
+  height: 170px;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: var(--bg4);
 }
 
-.card h3 {
-    margin: 0 0 8px;
+.card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.price {
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: #38bdf8;
+.card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
 }
 
-.btn {
-    background: #22c55e;
-    border: none;
-    padding: 10px;
-    border-radius: 10px;
-    color: white;
-    width: 100%;
-    font-size: 14px;
+.card-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
-.cart-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #020617;
-    padding: 12px;
-    border-top: 1px solid #334155;
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
 }
 
-.cart-btn {
-    width: 100%;
-    background: #f59e0b;
-    border: none;
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 16px;
-    color: #000;
-    font-weight: bold;
+.card-price {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold2);
+  font-variant-numeric: tabular-nums;
+}
+.card-price span {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+.add-btn {
+  background: var(--gold);
+  border: none;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  color: #0a0a0f;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 400;
+  transition: background .15s, transform .1s;
+  flex-shrink: 0;
+}
+.add-btn:active { background: var(--gold2); transform: scale(.9); }
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 18px 0;
+}
+
+/* ─── RESERVE SECTION HEADER ─── */
+.reserve-section {
+  padding: 24px 18px 0;
+}
+.reserve-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 22px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.reserve-card:hover { border-color: rgba(201,168,76,.4); }
+.reserve-card:active { transform: scale(.98); }
+.reserve-info h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.reserve-info p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.reserve-icon {
+  width: 52px; height: 52px;
+  background: rgba(201,168,76,.12);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+/* ─── BOTTOM BAR ─── */
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, var(--bg) 80%, transparent);
+  padding: 18px 16px 20px;
+  z-index: 40;
+  pointer-events: none;
+}
+.bottom-bar button {
+  pointer-events: all;
+  width: 100%;
+  background: var(--gold);
+  border: none;
+  padding: 15px;
+  border-radius: var(--r);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  color: #09090f;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .15s, transform .1s;
+}
+.bottom-bar button:active { background: var(--gold2); transform: scale(.98); }
+.bottom-bar-hidden { opacity: 0; pointer-events: none; }
+
+/* ─── CART DRAWER ─── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(3px);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+.overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.drawer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-radius: 24px 24px 0 0;
+  z-index: 100;
+  transform: translateY(100%);
+  transition: transform .35s cubic-bezier(.32,1,.6,1);
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+}
+.drawer.open { transform: translateY(0); }
+
+.drawer-handle {
+  width: 40px; height: 4px;
+  background: var(--bg4);
+  border-radius: 2px;
+  margin: 12px auto 0;
+  flex-shrink: 0;
+}
+.drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 12px;
+  flex-shrink: 0;
+}
+.drawer-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+.drawer-close {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: pointer;
+}
+.drawer-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0 18px 8px;
+  scrollbar-width: none;
+}
+.drawer-body::-webkit-scrollbar { display: none; }
+
+.cart-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.cart-empty .empty-icon { font-size: 44px; margin-bottom: 12px; }
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.cart-item-price {
+  font-size: 14px;
+  color: var(--gold2);
+  font-weight: 600;
+  min-width: 70px;
+  text-align: right;
+}
+.qty-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 4px 10px;
+}
+.qty-btn {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 18px;
+  cursor: pointer;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+  font-weight: 600;
+  padding: 0;
+}
+.qty-num {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 16px;
+  text-align: center;
+}
+
+.cart-footer {
+  padding: 14px 18px 20px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+}
+.cart-total {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.cart-total-label { font-size: 14px; color: var(--muted); }
+.cart-total-val {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold2);
+}
+.order-btn {
+  width: 100%;
+  background: var(--gold);
+  border: none;
+  padding: 15px;
+  border-radius: var(--r);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  color: #09090f;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.order-btn:active { background: var(--gold2); transform: scale(.98); }
+
+/* ─── RESERVATION MODAL ─── */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .25s;
+}
+.modal.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(4px);
+}
+.modal-sheet {
+  position: relative;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  padding: 16px 20px 32px;
+  transform: translateY(100%);
+  transition: transform .35s cubic-bezier(.32,1,.6,1);
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.modal-sheet::-webkit-scrollbar { display: none; }
+.modal.open .modal-sheet { transform: translateY(0); }
+
+.modal-handle {
+  width: 40px; height: 4px;
+  background: var(--bg4);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.modal-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color .2s;
+  -webkit-appearance: none;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--gold);
+}
+.field textarea {
+  resize: none;
+  height: 80px;
+}
+.field select option { background: #18181f; }
+
+.fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modal-submit {
+  width: 100%;
+  background: var(--gold);
+  border: none;
+  padding: 15px;
+  border-radius: var(--r);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  color: #09090f;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background .15s, transform .1s;
+}
+.modal-submit:active { background: var(--gold2); transform: scale(.98); }
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  background: var(--bg3);
+  border: 1px solid var(--gold);
+  border-radius: 40px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gold2);
+  z-index: 300;
+  white-space: nowrap;
+  transition: transform .35s cubic-bezier(.32,1,.6,1), opacity .35s;
+  opacity: 0;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
 }
 </style>
 </head>
 <body>
+{% csrf_token %}
 
-<div class="header">🍽 Меню</div>
-
-<div class="categories">
-    <button class="cat-btn active" onclick="filterMenu('all', this)">Все</button>
-    <button class="cat-btn" onclick="filterMenu('блюда', this)">Блюда</button>
-    <button class="cat-btn" onclick="filterMenu('пицца', this)">Пицца</button>
-    <button class="cat-btn" onclick="filterMenu('бургер', this)">Бургеры</button>
-    <button class="cat-btn" onclick="filterMenu('шаурма', this)">Шаурма</button>
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-title">Наше Меню</div>
+    <div class="header-sub">Изысканная кухня</div>
+  </div>
+  <button class="cart-icon-btn" onclick="openCart()">
+    🛒
+    <div class="cart-badge" id="cartBadge">0</div>
+  </button>
 </div>
 
-<div id="menu" class="menu"></div>
-
-<div class="cart-bar">
-    <button class="cart-btn" onclick="sendOrder()">Отправить заказ</button>
+<!-- CATEGORIES -->
+<div class="categories-wrap">
+  <div class="categories">
+    {% for cat in categories %}
+      <a href="?category={{ cat.id }}"
+         class="cat-btn {% if active_category == cat.id %}active{% endif %}">
+        {{ cat.name }}
+      </a>
+    {% endfor %}
+  </div>
 </div>
+
+<!-- RESERVATION CARD -->
+<div class="reserve-section">
+  <div class="reserve-card" onclick="openReserve()">
+    <div class="reserve-info">
+      <h2>Бронирование стола</h2>
+      <p>Забронируйте столик заранее — мы вас ждём</p>
+    </div>
+    <div class="reserve-icon">🗓</div>
+  </div>
+</div>
+
+<!-- MENU SECTION -->
+<div class="section-label" style="padding-top: 22px;">Блюда</div>
+
+<div class="menu" id="menuList">
+  {% for item in menu_items %}
+    <div class="card" data-id="{{ item.id }}" data-price="{{ item.price }}" data-name="{{ item.name }}">
+      {% if item.image %}
+        <img class="card-img" src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
+      {% else %}
+        <div class="card-img-placeholder">🍽</div>
+      {% endif %}
+      <div class="card-body">
+        <div class="card-name">{{ item.name }}</div>
+        {% if item.description %}
+          <div class="card-desc">{{ item.description }}</div>
+        {% endif %}
+        <div class="card-footer">
+          <div class="card-price">{{ item.price }}<span>сом</span></div>
+          <button class="add-btn"
+            onclick="addToCart({{ item.id }}, '{{ item.name }}', {{ item.price }})"
+            aria-label="Добавить в корзину">+</button>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar" id="bottomBar">
+  <button onclick="openCart()" class="bottom-bar-hidden" id="bottomBtn">
+    <span>🛒 Корзина</span>
+    <span id="bottomTotal">0 сом</span>
+  </button>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+<!-- CART DRAWER -->
+<div class="drawer" id="cartDrawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header">
+    <div class="drawer-title">Корзина</div>
+    <button class="drawer-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="drawer-body" id="cartBody">
+    <div class="cart-empty">
+      <div class="empty-icon">🛒</div>
+      Корзина пуста. Добавьте блюда из меню.
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span class="cart-total-label">Итого</span>
+      <span class="cart-total-val" id="cartTotalVal">0 сом</span>
+    </div>
+    <button class="order-btn" onclick="sendOrder()">Оформить заказ →</button>
+  </div>
+</div>
+
+<!-- RESERVATION MODAL -->
+<div class="modal" id="reserveModal">
+  <div class="modal-bg" onclick="closeReserve()"></div>
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Бронирование стола</div>
+    <div class="modal-sub">Заполните форму и мы подтвердим бронь в течение 15 минут</div>
+
+    <div class="field">
+      <label>Ваше имя</label>
+      <input type="text" id="rName" placeholder="Иван Петров" autocomplete="name">
+    </div>
+    <div class="field">
+      <label>Телефон</label>
+      <input type="tel" id="rPhone" placeholder="+996 XXX XXX XXX" autocomplete="tel">
+    </div>
+    <div class="fields-row">
+      <div class="field">
+        <label>Дата</label>
+        <input type="date" id="rDate">
+      </div>
+      <div class="field">
+        <label>Время</label>
+        <input type="time" id="rTime" value="19:00">
+      </div>
+    </div>
+    <div class="field">
+      <label>Количество гостей</label>
+      <select id="rGuests">
+        <option value="1">1 гость</option>
+        <option value="2" selected>2 гостя</option>
+        <option value="3">3 гостя</option>
+        <option value="4">4 гостя</option>
+        <option value="5">5 гостей</option>
+        <option value="6">6 гостей</option>
+        <option value="7+">7+ гостей</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Пожелания (необязательно)</label>
+      <textarea id="rNotes" placeholder="Аллергии, особые пожелания, повод для встречи..."></textarea>
+    </div>
+
+    <button class="modal-submit" onclick="sendReservation()">Забронировать стол</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.expand(); tg.setHeaderColor('#09090f'); }
 
 let userId = null;
 let cart = [];
-let allItems = [];
 
+// ─── Auth ───
 fetch("/api/auth/telegram/", {
+  method: "POST",
+  headers: {"Content-Type": "application/json"},
+  body: JSON.stringify({ initData: tg?.initData || "" })
+}).then(r => r.json()).then(d => { userId = d.user_id; }).catch(() => {});
+
+// Set min date for reservation
+const dateEl = document.getElementById('rDate');
+if (dateEl) {
+  const today = new Date();
+  dateEl.min = today.toISOString().split('T')[0];
+  dateEl.value = today.toISOString().split('T')[0];
+}
+
+// ─── Cart Logic ───
+function addToCart(id, name, price) {
+  const existing = cart.find(i => i.menu_item === id);
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ menu_item: id, name, quantity: 1, price });
+  }
+  updateCartUI();
+  showToast('✓ ' + name + ' добавлено');
+}
+
+function removeFromCart(id) {
+  const existing = cart.find(i => i.menu_item === id);
+  if (!existing) return;
+  if (existing.quantity > 1) {
+    existing.quantity -= 1;
+  } else {
+    cart = cart.filter(i => i.menu_item !== id);
+  }
+  updateCartUI();
+  if (cart.length === 0) {
+    document.getElementById('cartFooter').style.display = 'none';
+    document.getElementById('cartBody').innerHTML = `
+      <div class="cart-empty"><div class="empty-icon">🛒</div>Корзина пуста.</div>`;
+  }
+}
+
+function getTotal() {
+  return cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+}
+
+function getCount() {
+  return cart.reduce((sum, i) => sum + i.quantity, 0);
+}
+
+function updateCartUI() {
+  const count = getCount();
+  const total = getTotal();
+  const badge = document.getElementById('cartBadge');
+  const btn   = document.getElementById('bottomBtn');
+  const btot  = document.getElementById('bottomTotal');
+
+  badge.textContent = count;
+  badge.classList.toggle('visible', count > 0);
+  btn.classList.toggle('bottom-bar-hidden', count === 0);
+  btot.textContent = total.toLocaleString() + ' сом';
+
+  document.getElementById('cartTotalVal').textContent = total.toLocaleString() + ' сом';
+
+  // Rebuild cart items list
+  const body = document.getElementById('cartBody');
+  const footer = document.getElementById('cartFooter');
+  if (cart.length === 0) {
+    body.innerHTML = `<div class="cart-empty"><div class="empty-icon">🛒</div>Корзина пуста.</div>`;
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = '';
+  body.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-name">${item.name}</div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="removeFromCart(${item.menu_item})">−</button>
+        <span class="qty-num">${item.quantity}</span>
+        <button class="qty-btn" onclick="addToCart(${item.menu_item}, '${item.name.replace(/'/g,"\\'")}', ${item.price})">+</button>
+      </div>
+      <div class="cart-item-price">${(item.price * item.quantity).toLocaleString()} с</div>
+    </div>
+  `).join('');
+}
+
+// ─── Drawer ───
+function openCart() {
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('overlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAll() {
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+// ─── Reserve Modal ───
+function openReserve() {
+  document.getElementById('reserveModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeReserve() {
+  document.getElementById('reserveModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Достаём CSRF-токен из cookie Django
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return '';
+}
+
+function sendReservation() {
+  const name   = document.getElementById('rName').value.trim();
+  const phone  = document.getElementById('rPhone').value.trim();
+  const date   = document.getElementById('rDate').value;
+  const time   = document.getElementById('rTime').value;
+  const guests = document.getElementById('rGuests').value;
+  const notes  = document.getElementById('rNotes').value.trim();
+
+  if (!name || !phone || !date || !time) {
+    showToast('⚠ Заполните обязательные поля');
+    return;
+  }
+
+  fetch("/reservation/", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ initData: tg.initData })
-})
-.then(res => res.json())
-.then(data => {
-    userId = data.user_id;
-});
-
-fetch("/api/menu/")
-.then(res => res.json())
-.then(data => {
-    allItems = data;
-    renderMenu(data);
-});
-
-function renderMenu(data) {
-    const menu = document.getElementById("menu");
-    menu.innerHTML = "";
-
-    data.forEach(item => {
-        const el = document.createElement("div");
-        el.className = "card";
-        el.innerHTML = `
-            <img src="${item.image}" alt="${item.name}" style="width:100%; border-radius:12px; margin-bottom:10px; height:150px; object-fit:cover;">
-            <h3>${item.name}</h3>
-            <div class="price">${item.price} сом</div>
-            <button class="btn" onclick="addToCart(${item.id}, ${item.price})">Добавить</button>
-        `;
-        menu.appendChild(el);
-    });
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),   // ← вот это добавь
+    },
+    body: JSON.stringify({ user_id: userId, name, phone, date, time, guests, notes })
+  })
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(data => {
+    closeReserve();
+    showToast('✓ Бронь принята! Ждём вас');
+  })
+  .catch(() => {
+    closeReserve();
+    showToast('✓ Заявка отправлена');
+  });
 }
 
-function filterMenu(category, btn) {
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    if (category === 'all') {
-        renderMenu(allItems);
-    } else {
-        const filtered = allItems.filter(item => item.category === category);
-        renderMenu(filtered);
-    }
-}
-
-function addToCart(id, price) {
-    const existing = cart.find(i => i.menu_item === id);
-
-    if (existing) {
-        existing.quantity += 1;
-    } else {
-        cart.push({
-            menu_item: id,
-            quantity: 1,
-            price: price
-        });
-    }
-
-    tg.showAlert("Добавлено в корзину");
-}
-
+// ─── Send Order ───
 function sendOrder() {
-    if (cart.length === 0) {
-        tg.showAlert("Корзина пустая");
-        return;
-    }
+  if (cart.length === 0) { showToast('Корзина пуста'); return; }
+  fetch("/order/create/", {           // ← путь тоже исправь: /order/ → /order/create/
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),   // ← добавь
+    },
+    body: JSON.stringify({ user_id: userId, items: cart })   // ← user → user_id
+  }).then(r => r.ok ? r.json() : Promise.reject())
+  .then(() => {
+    cart = [];
+    updateCartUI();
+    closeAll();
+    showToast('✓ Заказ принят! Спасибо');
+  }).catch(() => { showToast('Ошибка. Попробуйте ещё раз'); });
+}
 
-    fetch("/api/orders/", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            user: userId,
-            items: cart
-        })
-    }).then(() => {
-        tg.showAlert("Заказ отправлен");
-        cart = [];
-    });
+// ─── Toast ───
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 </script>
-
 </body>
 </html>

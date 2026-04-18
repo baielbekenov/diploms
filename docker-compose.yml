@@ -1,71 +1,46 @@
 version: '3.9'
 
 services:
-  konditer:
-    build:
-      context: ./konditer
-    container_name: konditer
-    ports:
-      - "7357:7357"
+#  crm-system:
+#    build:
+#      context: ./crm-system
+#    container_name: crm-system
+#    command: gunicorn main.wsgi:application --bind 0.0.0.0:7000
 #    volumes:
-#      - ./konditer/db.sqlite3:/app/db.sqlite3
-    working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:7357
+#      - .:/app
+#      - crmsystem_volume:/app/staticfiles
+#    ports:
+#      - "7000:7000"
+#    restart: always
 
-  elective:
+  restoran:
     build:
-      context: ./elective
-    container_name: elective
+      context: ./restoran
+    container_name: restoran
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:6000
+    volumes:
+      - .:/app
+      - restoran_volume:/app/staticfiles
     ports:
-      - "6295:6295"
-#    volumes:
-#      - ./elective/db.sqlite3:/app/db.sqlite3
-    working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:6295
-
-  logist:
-    build:
-      context: ./logist
-    container_name: logist
-    ports:
-      - "5927:5927"
-#    volumes:
-#      - ./logist/db.sqlite3:/app/db.sqlite3
-    working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:5927
+      - "6000:6000"
+    restart: always
 
   toursite:
     build:
       context: ./toursite
     container_name: toursite
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:5000
+    volumes:
+      - .:/app
+      - toursite_volume:/app/staticfiles
     ports:
-      - "4902:4902"
-#    volumes:
-#      - ./toursite/db.sqlite3:/app/db.sqlite3
-    working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:4902
+      - "5000:5000"
+    restart: always
 
-  latex:
-    build:
-      context: ./latex
-    container_name: latex
-    ports:
-      - "3712:3712"
-#    volumes:
-#      - ./latex/db.sqlite3:/app/db.sqlite3
-    working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:3712
-
-  bytovoi:
-    build:
-      context: ./bytovoi
-    container_name: bytovoi
-    ports:
-      - "4466:4466"
-    #    volumes:
-    #      - ./bytovoi/db.sqlite3:/app/db.sqlite3
-    working_dir: /app
-    command: gunicorn main.wsgi:application --bind 0.0.0.0:4466
+volumes:
+#  crmsystem_volume:
+  restoran_volume:
+  toursite_volume:
 
 
     #  https://app-generator.dev/docs/products/django-libs/theme-soft-dashboard.html

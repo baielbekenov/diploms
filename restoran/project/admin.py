@@ -3,7 +3,6 @@ from django.contrib import admin
 from project.models import OrderItem, User, Order, Payment, MenuItem, CartItems, Table, Reservation, Category, Cart, DeliverySettings
 
 
-
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 1
@@ -11,7 +10,7 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('phone', 'first_name', 'email', 'created_at', 'id')
+    list_display = ('phone', 'first_name', 'email', 'id')
     search_fields = ('phone', 'first_name', 'email')
 
 

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бронь принята</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #09090f; --bg2: #111119; --bg3: #18181f;
+  --gold: #c9a84c; --gold2: #e8c97a;
+  --text: #f0ede6; --muted: #888;
+  --border: rgba(201,168,76,.18); --r: 14px; --r2: 20px;
+}
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+.icon {
+  font-size: 64px; margin-bottom: 24px;
+  animation: pop .4s cubic-bezier(.32,1,.6,1);
+}
+@keyframes pop {
+  from { transform: scale(.5); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 600;
+  margin-bottom: 10px;
+}
+.sub {
+  font-size: 14px; color: var(--muted);
+  line-height: 1.6; margin-bottom: 32px;
+}
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 20px 24px;
+  width: 100%; max-width: 340px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+.row {
+  display: flex; align-items: center;
+  gap: 10px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.row:last-child { border-bottom: none; }
+.row-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+.row-label { color: var(--muted); font-size: 12px; }
+.row-val { font-weight: 500; }
+.badge {
+  display: inline-block;
+  background: rgba(201,168,76,.15);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 4px 12px;
+  font-size: 12px; color: var(--gold2);
+  font-weight: 500;
+}
+.home-btn {
+  background: var(--gold); border: none;
+  padding: 15px 40px; border-radius: var(--r);
+  font-size: 15px; font-family: 'DM Sans', sans-serif;
+  font-weight: 600; color: #09090f;
+  cursor: pointer; text-decoration: none;
+  display: inline-block;
+  transition: background .15s, transform .1s;
+}
+.home-btn:active { background: var(--gold2); transform: scale(.98); }
+.notice {
+  font-size: 12px; color: var(--muted);
+  margin-top: 16px; line-height: 1.6;
+}
+</style>
+</head>
+<body>
+<div class="icon">🗓</div>
+<h1>Бронь принята!</h1>
+<p class="sub">Мы подтвердим вашу бронь<br>в течение 15 минут в Telegram</p>
+
+<div class="card">
+  <div class="row">
+    <span class="row-icon">🔢</span>
+    <div>
+      <div class="row-label">Номер брони</div>
+      <div class="row-val">#{{ reservation.pk }}</div>
+    </div>
+    <span class="badge" style="margin-left:auto;">{{ reservation.status }}</span>
+  </div>
+  <div class="row">
+    <span class="row-icon">📅</span>
+    <div>
+      <div class="row-label">Дата и время</div>
+      <div class="row-val">{{ reservation.reservation_time|date:"d.m.Y в H:i" }}</div>
+    </div>
+  </div>
+  <div class="row">
+    <span class="row-icon">🪑</span>
+    <div>
+      <div class="row-label">Стол</div>
+      <div class="row-val">№{{ reservation.table.number }} (до {{ reservation.table.seats }} мест)</div>
+    </div>
+  </div>
+  <div class="row">
+    <span class="row-icon">👥</span>
+    <div>
+      <div class="row-label">Гостей</div>
+      <div class="row-val">{{ reservation.guests_count }}</div>
+    </div>
+  </div>
+</div>
+
+<a href="/" class="home-btn">← Вернуться в меню</a>
+<p class="notice">Ожидайте уведомления в Telegram.<br>Мы свяжемся с вами для подтверждения.</p>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.expand(); tg.setHeaderColor('#09090f'); }
+</script>
+</body>
+</html>

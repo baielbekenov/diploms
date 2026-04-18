@@ -1,11 +1,17 @@
 from rest_framework import serializers
 
-from project.models import MenuItem, OrderItem, Order
+from project.models import MenuItem, OrderItem, Order, Category
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuItem
+        fields = '__all__'
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
         fields = '__all__'
 
 

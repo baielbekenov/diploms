@@ -1,33 +1,32 @@
-# Используем официальный образ Python
-FROM python:3.11-slim
+# Базовый образ
+FROM python:3.12-slim
 
-# Установка переменных окружения
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Переменные окружения
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Установка зависимостей системы
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Создание рабочей директории
+# Рабочая директория
 WORKDIR /app
 
-# Копируем requirements
+# Установка системных зависимостей
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
+# Установка зависимостей Python
 COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Устанавливаем Python-зависимости
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-
-
-# Копируем остальные файлы проекта
+# Копируем проект
 COPY . .
 
+# Собираем статику (если используешь)
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 4902
+# Открываем порт
+EXPOSE 5000
 
-# Команда по умолчанию (можно переопределить в docker-compose)
-CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:4902"]
+# Команда запуска
+CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:5000"]

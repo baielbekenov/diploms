@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
@@ -7,13 +7,13 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 class User(AbstractUser):
     phone = models.CharField(max_length=15)
     telegram_id = models.CharField(max_length=255)
-    role = models.CharField(max_length=50, choices=[
-        ('client', 'admin'),
-        ('employee',),
-    ], default='client')
 
     def __str__(self):
         return self.first_name
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
 
 
 class Category(models.Model):
@@ -22,6 +22,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
 
 class MenuItem(models.Model):
@@ -35,6 +39,10 @@ class MenuItem(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Меню"
+        verbose_name_plural = "Меню"
+
 
 class Table(models.Model):
     number = models.IntegerField(unique=True)
@@ -44,20 +52,24 @@ class Table(models.Model):
     def __str__(self):
         return f"Table {self.number}"
 
+    class Meta:
+        verbose_name = "Стол"
+        verbose_name_plural = "Столы"
+
 
 class Reservation(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     table = models.ForeignKey(Table, on_delete=models.CASCADE)
     reservation_time = models.DateTimeField()
     guests_count = models.IntegerField()
-    status = models.CharField(max_length=50, choices=[
-        ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('cancelled', 'Cancelled'),
-    ], default='pending')
+    status = models.CharField(max_length=50, blank=True, null=True )
 
     def __str__(self):
         return f"{self.customer} - {self.table} at {self.reservation_time}"
+
+    class Meta:
+        verbose_name = "Ререзрирование"
+        verbose_name_plural = "Ререзрирования"
 
 
 class DeliverySettings(models.Model):
@@ -173,18 +185,17 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     payment_method = models.CharField(
         max_length=20, choices=PAYMENT_CHOICES, default='null', verbose_name='Метод оплаты')
-    status = models.CharField(max_length=50, choices=[
-        ('new', 'New'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled'),
-    ], default='new')
+    status = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f"Order #{self.id}"
 
-    def total_price(self):
+    def calculate_total(self):
         return sum(item.price * item.quantity for item in self.items.all())
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
 
 
 class OrderItem(models.Model):
@@ -209,15 +220,15 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     user = models.ForeignKey(User, related_name='user_payments', on_delete=models.SET_NULL, null=True,
                              verbose_name='Пользователь')
-    payment_method = models.CharField(max_length=50, choices=[
-        ('cash', 'Cash'),
-        ('card', 'Card'),
-        ('online', 'Online'),
-    ])
+    payment_method = models.CharField(max_length=50, null=True, blank=True)
     paid_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Payment for Order #{self.order.id}"
+
+    class Meta:
+        verbose_name = "Оплата"
+        verbose_name_plural = "Оплаты"
 
 
 
