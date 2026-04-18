@@ -19,7 +19,7 @@ services:
     container_name: restoran
     command: gunicorn main.wsgi:application --bind 0.0.0.0:6000
     volumes:
-      - .:/app
+      - ./restoran:/app
       - restoran_volume:/app/staticfiles
     ports:
       - "6000:6000"
@@ -31,7 +31,7 @@ services:
     container_name: toursite
     command: gunicorn main.wsgi:application --bind 0.0.0.0:5000
     volumes:
-      - .:/app
+      - ./toursite:/app
       - toursite_volume:/app/staticfiles
     ports:
       - "5000:5000"
