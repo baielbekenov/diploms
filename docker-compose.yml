@@ -25,6 +25,13 @@ services:
       - "5555:5555"
     restart: always
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    network_mode: host
+    command: tunnel --url http://localhost:5555
+    restart: always
+
   toursite:
     build:
       context: ./toursite
