@@ -3,7 +3,7 @@ version: '3.9'
 services:
   educrm:
     build:
-      context: ./educrm
+      context: ./educrm_project
     container_name: educrm
     command: gunicorn main.wsgi:application --bind 0.0.0.0:7777
     volumes:
