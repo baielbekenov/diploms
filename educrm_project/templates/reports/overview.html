@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Отчёты{% endblock %}
+{% block page_title %}Аналитика и отчёты{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <!-- Source chart -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><span class="card-title">Источники привлечения</span></div>
+            <div class="card-body">
+                {% for s in source_data %}
+                <div style="margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                        <span style="font-size:13px;font-weight:500">{{ s.label }}</span>
+                        <span class="text-mono" style="font-size:13px;color:var(--accent);font-weight:600">{{ s.count }}</span>
+                    </div>
+                    <div class="progress-bar-custom" style="height:6px">
+                        {% with max_count=source_data.0.count %}
+                        <div class="progress-fill" style="width:{% if max_count %}{% widthratio s.count max_count 100 %}{% else %}0{% endif %}%"></div>
+                        {% endwith %}
+                    </div>
+                </div>
+                {% empty %}
+                <div style="color:var(--text-muted);text-align:center;padding:30px">Нет данных</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Payments by method -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header"><span class="card-title">Оплаты по способу (этот месяц)</span></div>
+            <div class="card-body">
+                {% for m in by_method %}
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div style="width:10px;height:10px;border-radius:50%;background:{% if m.method == 'cash' %}var(--green){% elif m.method == 'transfer' %}var(--accent){% else %}var(--purple){% endif %}"></div>
+                        <span style="font-size:14px;font-weight:500">
+                            {% if m.method == 'cash' %}Наличные{% elif m.method == 'transfer' %}Перевод{% else %}Карта{% endif %}
+                        </span>
+                    </div>
+                    <span class="text-mono" style="font-size:15px;font-weight:700;color:var(--green)">{{ m.total|floatformat:0 }} сом</span>
+                </div>
+                {% empty %}
+                <div style="color:var(--text-muted);text-align:center;padding:30px">Нет платежей в этом месяце</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Low attendance -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">⚠ Низкая посещаемость (&lt;70%)</span>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Студент</th><th>Группа</th><th>Посещаемость</th></tr>
+                </thead>
+                <tbody>
+                    {% for item in low_attendance %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'student_detail' item.enrollment.student.pk %}" style="color:var(--text);text-decoration:none;font-weight:600">
+                                {{ item.enrollment.student.full_name }}
+                            </a>
+                        </td>
+                        <td style="color:var(--text-dim);font-size:13px">{{ item.enrollment.group.name }}</td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px">
+                                <div class="progress-bar-custom" style="width:80px;height:6px">
+                                    <div class="progress-fill" style="width:{{ item.rate }}%;background:{% if item.rate < 50 %}var(--red){% else %}var(--yellow){% endif %}"></div>
+                                </div>
+                                <span class="text-mono" style="font-size:13px;color:{% if item.rate < 50 %}var(--red){% else %}var(--yellow){% endif %};font-weight:700">{{ item.rate }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center;color:var(--green);padding:24px;font-weight:600">
+                        <i class="bi bi-check-circle"></i> Все студенты посещают &gt;70%
+                    </td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Debtors -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">💳 Студенты с задолженностью</span>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Студент</th><th>Телефон</th><th>Задолженность</th></tr>
+                </thead>
+                <tbody>
+                    {% for s in debtors %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'student_detail' s.pk %}" style="color:var(--text);text-decoration:none;font-weight:600">{{ s.full_name }}</a>
+                        </td>
+                        <td class="text-mono" style="font-size:12px;color:var(--text-dim)">{{ s.phone }}</td>
+                        <td class="text-mono" style="color:var(--red);font-weight:700;font-size:14px">{{ s.total_debt|floatformat:0 }} сом</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center;color:var(--green);padding:24px;font-weight:600">
+                        <i class="bi bi-check-circle"></i> Задолженностей нет
+                    </td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

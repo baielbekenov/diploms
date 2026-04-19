@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}{{ group.name }}{% endblock %}
+{% block page_title %}{{ group.name }}{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'attendance_mark' group.pk %}" class="btn-primary-custom">
+    <i class="bi bi-check2-all"></i> Отметить посещаемость
+</a>
+<a href="{% url 'enrollment_create_for_group' group.pk %}" class="btn-ghost">
+    <i class="bi bi-person-plus"></i> Добавить студента
+</a>
+<a href="{% url 'group_edit' group.pk %}" class="btn-ghost">
+    <i class="bi bi-pencil"></i> Редактировать
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <!-- Group info -->
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header"><span class="card-title">О группе</span></div>
+            <div class="card-body">
+                <div style="display:flex;flex-direction:column;gap:14px">
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Курс</div>
+                        <span class="badge-custom badge-blue" style="font-size:12px">{{ group.course.name }}</span>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Учитель</div>
+                        <div style="font-weight:600">
+                            {% if group.teacher %}
+                            <a href="{% url 'teacher_detail' group.teacher.pk %}" style="color:var(--accent);text-decoration:none">{{ group.teacher.full_name }}</a>
+                            {% else %}—{% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Расписание</div>
+                        <div style="font-weight:600">{{ group.get_schedule_display }}</div>
+                        {% if group.time_start %}
+                        <div class="text-mono" style="font-size:12px;color:var(--text-dim)">{{ group.time_start|time:"H:i" }}{% if group.time_end %} – {{ group.time_end|time:"H:i" }}{% endif %}</div>
+                        {% endif %}
+                    </div>
+                    {% if group.room %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Аудитория</div>
+                        <div style="font-weight:600">{{ group.room }}</div>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Статус</div>
+                        <span class="badge-custom {% if group.status == 'active' %}badge-green{% elif group.status == 'planned' %}badge-yellow{% else %}badge-gray{% endif %}">
+                            {{ group.get_status_display }}
+                        </span>
+                    </div>
+                    {% if group.start_date %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Период</div>
+                        <div style="font-size:13px">{{ group.start_date|date:"d.m.Y" }} {% if group.end_date %}– {{ group.end_date|date:"d.m.Y" }}{% endif %}</div>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Наполненность</div>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                            <span style="font-size:12px;color:var(--text-dim)">{{ group.student_count }} из {{ group.max_students }}</span>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" style="width:{% if group.max_students %}{% widthratio group.student_count group.max_students 100 %}{% else %}0{% endif %}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Цена / месяц</div>
+                        <div class="text-mono" style="font-size:16px;font-weight:600;color:var(--green)">{{ group.course.price_per_month|floatformat:0 }} сом</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'attendance_history' group.pk %}" class="btn-ghost" style="width:100%;justify-content:center;display:flex">
+            <i class="bi bi-calendar3"></i> История посещаемости
+        </a>
+    </div>
+
+    <!-- Students table -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Студенты группы ({{ enrollments.count }})</span>
+                <a href="{% url 'enrollment_create_for_group' group.pk %}" class="btn-ghost" style="padding:4px 10px;font-size:12px">
+                    <i class="bi bi-plus"></i> Добавить
+                </a>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Студент</th>
+                        <th>Телефон</th>
+                        <th>Дата зачисления</th>
+                        <th>Скидка</th>
+                        <th>Статус</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in enrollments %}
+                    <tr>
+                        <td class="text-mono" style="color:var(--text-muted);font-size:12px">{{ forloop.counter }}</td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px">
+                                <div class="avatar-sm">{{ e.student.first_name|first|upper }}</div>
+                                <div>
+                                    <a href="{% url 'student_detail' e.student.pk %}" style="color:var(--text);text-decoration:none;font-weight:600">{{ e.student.full_name }}</a>
+                                    {% if e.student.school %}<div style="font-size:11px;color:var(--text-muted)">{{ e.student.school }}</div>{% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-mono" style="font-size:12px;color:var(--text-dim)">{{ e.student.phone }}</td>
+                        <td style="color:var(--text-muted);font-size:12px">{{ e.enrolled_date|date:"d.m.Y" }}</td>
+                        <td>{% if e.discount_percent %}<span class="badge-custom badge-yellow">-{{ e.discount_percent }}%</span>{% else %}—{% endif %}</td>
+                        <td>
+                            <span class="badge-custom {% if e.status == 'active' %}badge-green{% elif e.status == 'completed' %}badge-blue{% elif e.status == 'dropped' %}badge-red{% else %}badge-yellow{% endif %}">
+                                {{ e.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:4px">
+                                <a href="{% url 'payment_create_for_student' e.student.pk %}" class="btn-ghost" style="padding:3px 7px;font-size:11px;color:var(--green)" title="Принять оплату">
+                                    <i class="bi bi-cash"></i>
+                                </a>
+                                <form method="post" action="{% url 'enrollment_update_status' e.pk %}">
+                                    {% csrf_token %}
+                                    {% if e.status == 'active' %}
+                                    <button type="submit" name="status" value="dropped" class="btn-ghost" style="padding:3px 7px;font-size:11px;color:var(--red)" title="Отчислить">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state" style="padding:40px">
+                                <i class="bi bi-person-plus"></i>
+                                Нет студентов. <a href="{% url 'enrollment_create_for_group' group.pk %}" style="color:var(--accent)">Записать первого</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

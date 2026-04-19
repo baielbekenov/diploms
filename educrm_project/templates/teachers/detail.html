@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}{{ teacher.full_name }}{% endblock %}
+{% block page_title %}{{ teacher.full_name }}{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'teacher_edit' teacher.pk %}" class="btn-primary-custom">
+    <i class="bi bi-pencil"></i> Редактировать
+</a>
+<a href="{% url 'teacher_list' %}" class="btn-ghost">
+    <i class="bi bi-arrow-left"></i> Назад
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body" style="text-align:center;padding:30px">
+                <div style="width:72px;height:72px;background:var(--purple-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;font-weight:800;color:var(--purple)">
+                    {{ teacher.first_name|first|upper }}
+                </div>
+                <div style="font-size:18px;font-weight:700;margin-bottom:4px">{{ teacher.full_name }}</div>
+                <div class="text-mono" style="color:var(--text-muted);font-size:13px">{{ teacher.phone }}</div>
+                {% if teacher.email %}<div style="color:var(--text-muted);font-size:13px">{{ teacher.email }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header"><span class="card-title">Информация</span></div>
+            <div class="card-body">
+                <div style="display:flex;flex-direction:column;gap:12px">
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Курсы</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px">
+                            {% for c in teacher.courses.all %}
+                            <span class="badge-custom badge-blue">{{ c.name }}</span>
+                            {% empty %}<span style="color:var(--text-muted);font-size:13px">Не назначены</span>{% endfor %}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Ставка / час</div>
+                        <div class="text-mono" style="font-size:18px;font-weight:600;color:var(--green)">{{ teacher.salary_rate|floatformat:0 }} сом</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Дата найма</div>
+                        <div style="font-size:13px">{{ teacher.hired_date|date:"d.m.Y" }}</div>
+                    </div>
+                    {% if teacher.bio %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">О себе</div>
+                        <div style="font-size:13px;color:var(--text-dim);line-height:1.6">{{ teacher.bio }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><span class="card-title">Группы ({{ groups.count }})</span></div>
+            <table class="data-table">
+                <thead><tr><th>Группа</th><th>Курс</th><th>Расписание</th><th>Студентов</th><th>Статус</th></tr></thead>
+                <tbody>
+                    {% for g in groups %}
+                    <tr>
+                        <td><a href="{% url 'group_detail' g.pk %}" style="color:var(--accent);text-decoration:none;font-weight:600">{{ g.name }}</a></td>
+                        <td style="color:var(--text-dim);font-size:13px">{{ g.course.name }}</td>
+                        <td style="color:var(--text-dim);font-size:13px">{{ g.get_schedule_display }}</td>
+                        <td class="text-mono" style="font-size:12px">{{ g.student_count }}/{{ g.max_students }}</td>
+                        <td><span class="badge-custom {% if g.status == 'active' %}badge-green{% elif g.status == 'planned' %}badge-yellow{% else %}badge-gray{% endif %}">{{ g.get_status_display }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">Нет групп</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

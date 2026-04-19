@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Курсы{% endblock %}
+{% block page_title %}Курсы{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'course_create' %}" class="btn-primary-custom">
+    <i class="bi bi-plus-lg"></i> Создать курс
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    {% for c in courses %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div style="height:3px;background:{% if c.course_type == 'ort' %}var(--accent){% elif c.course_type == 'language' %}var(--green){% else %}var(--purple){% endif %}"></div>
+            <div class="card-body" style="padding:20px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                    <div>
+                        <div style="font-size:15px;font-weight:700;margin-bottom:4px">{{ c.name }}</div>
+                        <span class="badge-custom {% if c.course_type == 'ort' %}badge-blue{% elif c.course_type == 'language' %}badge-green{% else %}badge-purple{% endif %}">
+                            {{ c.get_course_type_display }}
+                        </span>
+                        {% if c.language %}<span class="badge-custom badge-gray" style="margin-left:4px">{{ c.get_language_display }}</span>{% endif %}
+                    </div>
+                    {% if not c.is_active %}<span class="badge-custom badge-red">Неактивен</span>{% endif %}
+                </div>
+
+                {% if c.description %}
+                <div style="color:var(--text-muted);font-size:13px;margin-bottom:14px;line-height:1.5">{{ c.description|truncatechars:80 }}</div>
+                {% endif %}
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+                    <div style="background:var(--bg-hover);border-radius:8px;padding:10px">
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Цена/мес</div>
+                        <div class="text-mono" style="font-size:16px;font-weight:600;color:var(--green)">{{ c.price_per_month|floatformat:0 }}</div>
+                        <div style="font-size:10px;color:var(--text-muted)">сом</div>
+                    </div>
+                    <div style="background:var(--bg-hover);border-radius:8px;padding:10px">
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Групп</div>
+                        <div class="text-mono" style="font-size:18px;font-weight:600">{{ c.group_count }}</div>
+                    </div>
+                </div>
+
+                <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px">
+                    <i class="bi bi-clock"></i> Длительность: {{ c.duration_months }} мес.
+                </div>
+
+                <a href="{% url 'course_edit' c.pk %}" class="btn-ghost" style="width:100%;justify-content:center;display:flex;font-size:12px">
+                    <i class="bi bi-pencil"></i> Редактировать
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="empty-state">
+            <i class="bi bi-book"></i>
+            Нет курсов. <a href="{% url 'course_create' %}" style="color:var(--accent)">Создать первый</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

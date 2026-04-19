@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}Посещаемость — {{ group.name }}{% endblock %}
+{% block page_title %}Посещаемость: {{ group.name }}{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'group_detail' group.pk %}" class="btn-ghost">
+    <i class="bi bi-arrow-left"></i> К группе
+</a>
+<a href="{% url 'attendance_history' group.pk %}" class="btn-ghost">
+    <i class="bi bi-calendar3"></i> История
+</a>
+{% endblock %}
+
+{% block content %}
+<div style="max-width:900px">
+    <form method="post">
+        {% csrf_token %}
+        <div class="card mb-4">
+            <div class="card-body" style="padding:16px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div>
+                    <label class="form-label">Дата занятия</label>
+                    <input type="date" name="date" class="form-control" value="{{ today|date:'Y-m-d' }}" style="width:180px" required>
+                </div>
+                <div style="margin-top:22px">
+                    <button type="button" id="markAllPresent" class="btn-ghost" style="color:var(--green)">
+                        <i class="bi bi-check-all"></i> Все присутствуют
+                    </button>
+                </div>
+                <div style="margin-top:22px">
+                    <button type="button" id="markAllAbsent" class="btn-ghost" style="color:var(--red)">
+                        <i class="bi bi-x-circle"></i> Все отсутствуют
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <span class="card-title">Студентов: {{ enrollments.count }}</span>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Студент</th>
+                        <th>Телефон</th>
+                        <th style="width:320px">Статус посещения</th>
+                        <th>Заметка</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in enrollments %}
+                    {% with att=existing|default_if_none:None %}
+                    <tr>
+                        <td class="text-mono" style="color:var(--text-muted);font-size:12px">{{ forloop.counter }}</td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px">
+                                <div class="avatar-sm">{{ e.student.first_name|first|upper }}</div>
+                                <div style="font-weight:600">{{ e.student.full_name }}</div>
+                            </div>
+                        </td>
+                        <td class="text-mono" style="font-size:12px;color:var(--text-dim)">{{ e.student.phone }}</td>
+                        <td>
+                            <div class="status-toggle" data-enrollment="{{ e.pk }}">
+                                {% for val, label in status_choices %}
+                                <label class="status-option status-{{ val }}">
+                                    <input type="radio" name="status_{{ e.pk }}" value="{{ val }}"
+                                        {% if existing|default:None %}
+                                            {% with rec=existing|default:None %}{% endwith %}
+                                        {% endif %}
+                                        {% if not existing %}{% if val == 'present' %}checked{% endif %}{% endif %}
+                                    >
+                                    {{ label }}
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <input type="text" name="notes_{{ e.pk }}" class="form-control" placeholder="Доп. заметка..." style="font-size:12px;padding:6px 10px">
+                        </td>
+                    </tr>
+                    {% endwith %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state" style="padding:40px">
+                                <i class="bi bi-people"></i>
+                                Нет студентов в группе
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if enrollments %}
+        <div style="display:flex;justify-content:flex-end;gap:10px">
+            <a href="{% url 'group_detail' group.pk %}" class="btn-ghost">Отмена</a>
+            <button type="submit" class="btn-primary-custom" style="padding:10px 28px">
+                <i class="bi bi-save"></i> Сохранить посещаемость
+            </button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.status-toggle {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.status-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    transition: all 0.15s;
+    user-select: none;
+}
+.status-option input[type="radio"] { display: none; }
+.status-option:has(input:checked).status-present { background:var(--green-dim); border-color:rgba(16,185,129,0.4); color:var(--green); }
+.status-option:has(input:checked).status-absent { background:var(--red-dim); border-color:rgba(239,68,68,0.4); color:var(--red); }
+.status-option:has(input:checked).status-late { background:var(--yellow-dim); border-color:rgba(245,158,11,0.4); color:var(--yellow); }
+.status-option:has(input:checked).status-excused { background:var(--accent-dim); border-color:rgba(59,130,246,0.4); color:var(--accent); }
+.status-option:hover { background:var(--bg-hover); color:var(--text); }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('markAllPresent').addEventListener('click', () => {
+    document.querySelectorAll('input[type="radio"][value="present"]').forEach(r => r.checked = true);
+});
+document.getElementById('markAllAbsent').addEventListener('click', () => {
+    document.querySelectorAll('input[type="radio"][value="absent"]').forEach(r => r.checked = true);
+});
+</script>
+{% endblock %}

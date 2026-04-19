@@ -1,17 +1,17 @@
 version: '3.9'
 
 services:
-#  crm-system:
-#    build:
-#      context: ./crm-system
-#    container_name: crm-system
-#    command: gunicorn main.wsgi:application --bind 0.0.0.0:7000
-#    volumes:
-#      - .:/app
-#      - crmsystem_volume:/app/staticfiles
-#    ports:
-#      - "7000:7000"
-#    restart: always
+  educrm:
+    build:
+      context: ./educrm
+    container_name: educrm
+    command: gunicorn main.wsgi:application --bind 0.0.0.0:7777
+    volumes:
+      - .:/app
+      - educrm_volume:/app/staticfiles
+    ports:
+      - "7777:7777"
+    restart: always
 
   restoran:
     build:
@@ -45,7 +45,7 @@ services:
     restart: always
 
 volumes:
-#  crmsystem_volume:
+  educrm_volume:
   restoran_volume:
   toursite_volume:
 

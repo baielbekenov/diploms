@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Студенты{% endblock %}
+{% block page_title %}Студенты{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'student_create' %}" class="btn-primary-custom">
+    <i class="bi bi-plus-lg"></i> Добавить
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Search -->
+<div class="card mb-4">
+    <div class="card-body" style="padding:16px 20px">
+        <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:200px">
+                <label class="form-label">Поиск</label>
+                <input type="text" name="query" value="{{ form.query.value|default:'' }}" class="form-control" placeholder="Имя, фамилия, телефон...">
+            </div>
+            <div style="min-width:140px">
+                <label class="form-label">Статус</label>
+                <select name="status" class="form-select">
+                    <option value="">Все</option>
+                    <option value="active" {% if form.status.value == 'active' %}selected{% endif %}>Активный</option>
+                    <option value="inactive" {% if form.status.value == 'inactive' %}selected{% endif %}>Неактивный</option>
+                    <option value="graduate" {% if form.status.value == 'graduate' %}selected{% endif %}>Выпускник</option>
+                </select>
+            </div>
+            <div style="min-width:140px">
+                <label class="form-label">Источник</label>
+                <select name="source" class="form-select">
+                    <option value="">Все</option>
+                    <option value="instagram" {% if form.source.value == 'instagram' %}selected{% endif %}>Instagram</option>
+                    <option value="referral" {% if form.source.value == 'referral' %}selected{% endif %}>Рекомендация</option>
+                    <option value="walk_in" {% if form.source.value == 'walk_in' %}selected{% endif %}>Зашёл сам</option>
+                    <option value="website" {% if form.source.value == 'website' %}selected{% endif %}>Сайт</option>
+                    <option value="other" {% if form.source.value == 'other' %}selected{% endif %}>Другое</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary-custom">
+                <i class="bi bi-search"></i> Найти
+            </button>
+            <a href="{% url 'student_list' %}" class="btn-ghost">Сбросить</a>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">Всего: {{ students.count }} студент(ов)</span>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Студент</th>
+                <th>Телефон</th>
+                <th>Школа / Класс</th>
+                <th>Статус</th>
+                <th>Источник</th>
+                <th>Зарегистрирован</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div class="avatar-sm">{{ student.first_name|first|upper }}</div>
+                        <div>
+                            <a href="{% url 'student_detail' student.pk %}" style="color:var(--text);text-decoration:none;font-weight:600;display:block">
+                                {{ student.full_name }}
+                            </a>
+                            {% if student.email %}<div style="font-size:11px;color:var(--text-muted)">{{ student.email }}</div>{% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td class="text-mono" style="font-size:12px;color:var(--text-dim)">{{ student.phone }}</td>
+                <td style="color:var(--text-dim);font-size:13px">
+                    {{ student.school|default:"—" }}{% if student.grade %}, {{ student.grade }} кл.{% endif %}
+                </td>
+                <td>
+                    <span class="badge-custom {% if student.status == 'active' %}badge-green{% elif student.status == 'graduate' %}badge-blue{% else %}badge-gray{% endif %}">
+                        {{ student.get_status_display }}
+                    </span>
+                </td>
+                <td><span class="badge-custom badge-gray">{{ student.get_source_display }}</span></td>
+                <td style="color:var(--text-muted);font-size:12px">{{ student.registered_at|date:"d.m.Y" }}</td>
+                <td>
+                    <div style="display:flex;gap:6px">
+                        <a href="{% url 'student_edit' student.pk %}" class="btn-ghost" style="padding:4px 8px;font-size:12px">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'payment_create_for_student' student.pk %}" class="btn-ghost" style="padding:4px 8px;font-size:12px;color:var(--green)">
+                            <i class="bi bi-cash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">
+                    <div class="empty-state">
+                        <i class="bi bi-people"></i>
+                        Студентов не найдено
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

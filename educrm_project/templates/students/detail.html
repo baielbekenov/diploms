@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block title %}{{ student.full_name }}{% endblock %}
+{% block page_title %}{{ student.full_name }}{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'payment_create_for_student' student.pk %}" class="btn-primary-custom">
+    <i class="bi bi-cash-stack"></i> Записать платёж
+</a>
+<a href="{% url 'enrollment_create_for_student' student.pk %}" class="btn-ghost">
+    <i class="bi bi-plus-circle"></i> Записать в группу
+</a>
+<a href="{% url 'student_edit' student.pk %}" class="btn-ghost">
+    <i class="bi bi-pencil"></i> Редактировать
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <!-- Student Info -->
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body" style="text-align:center;padding:30px 20px">
+                <div style="width:72px;height:72px;background:var(--accent-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;font-weight:800;color:var(--accent)">
+                    {{ student.first_name|first|upper }}
+                </div>
+                <div style="font-size:18px;font-weight:700;margin-bottom:4px">{{ student.full_name }}</div>
+                {% if student.school %}
+                <div style="color:var(--text-muted);font-size:13px">{{ student.school }}{% if student.grade %}, {{ student.grade }} класс{% endif %}</div>
+                {% endif %}
+                <div style="margin-top:12px">
+                    <span class="badge-custom {% if student.status == 'active' %}badge-green{% elif student.status == 'graduate' %}badge-blue{% else %}badge-gray{% endif %}">
+                        {{ student.get_status_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header"><span class="card-title">Контакты</span></div>
+            <div class="card-body">
+                <div style="display:flex;flex-direction:column;gap:12px">
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Телефон</div>
+                        <div class="text-mono" style="font-size:14px">{{ student.phone }}</div>
+                    </div>
+                    {% if student.parent_phone %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Телефон родителя</div>
+                        <div class="text-mono" style="font-size:14px">{{ student.parent_phone }}</div>
+                    </div>
+                    {% endif %}
+                    {% if student.email %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Email</div>
+                        <div style="font-size:14px">{{ student.email }}</div>
+                    </div>
+                    {% endif %}
+                    {% if student.birth_date %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Дата рождения</div>
+                        <div style="font-size:14px">{{ student.birth_date|date:"d.m.Y" }} {% if student.age %}({{ student.age }} лет){% endif %}</div>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Источник</div>
+                        <span class="badge-custom badge-gray">{{ student.get_source_display }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if student.notes %}
+        <div class="card mb-3">
+            <div class="card-header"><span class="card-title">Заметки</span></div>
+            <div class="card-body" style="color:var(--text-dim);font-size:13.5px;line-height:1.7">{{ student.notes }}</div>
+        </div>
+        {% endif %}
+
+        <div style="display:flex;gap:8px;margin-top:4px">
+            <a href="{% url 'student_delete' student.pk %}" class="btn-danger-custom" style="flex:1;justify-content:center">
+                <i class="bi bi-trash"></i> Удалить
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <!-- Enrollments -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <span class="card-title">Зачисления в группы</span>
+                <a href="{% url 'enrollment_create_for_student' student.pk %}" class="btn-ghost" style="padding:4px 10px;font-size:12px">
+                    <i class="bi bi-plus"></i> Добавить
+                </a>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Группа</th><th>Курс</th><th>Учитель</th><th>Статус</th><th>Скидка</th><th>Дата</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for e in enrollments %}
+                    <tr>
+                        <td><a href="{% url 'group_detail' e.group.pk %}" style="color:var(--accent);text-decoration:none;font-weight:600">{{ e.group.name }}</a></td>
+                        <td style="color:var(--text-dim);font-size:13px">{{ e.group.course.name }}</td>
+                        <td style="color:var(--text-dim);font-size:13px">{{ e.group.teacher|default:"—" }}</td>
+                        <td>
+                            <span class="badge-custom {% if e.status == 'active' %}badge-green{% elif e.status == 'completed' %}badge-blue{% elif e.status == 'dropped' %}badge-red{% else %}badge-yellow{% endif %}">
+                                {{ e.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if e.discount_percent %}
+                            <span class="badge-custom badge-yellow">-{{ e.discount_percent }}%</span>
+                            {% else %}—{% endif %}
+                        </td>
+                        <td style="color:var(--text-muted);font-size:12px">{{ e.enrolled_date|date:"d.m.Y" }}</td>
+                        <td>
+                            <form method="post" action="{% url 'enrollment_update_status' e.pk %}" style="display:flex;gap:4px">
+                                {% csrf_token %}
+                                {% if e.status == 'active' %}
+                                <button type="submit" name="status" value="dropped" class="btn-ghost" style="padding:3px 7px;font-size:11px;color:var(--red)">Отчислить</button>
+                                {% elif e.status == 'dropped' %}
+                                <button type="submit" name="status" value="active" class="btn-ghost" style="padding:3px 7px;font-size:11px;color:var(--green)">Восстановить</button>
+                                {% endif %}
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px">Нет зачислений</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Payments -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">История платежей</span>
+                <div style="display:flex;align-items:center;gap:16px">
+                    <span style="font-family:var(--mono);color:var(--green);font-size:13px;font-weight:600">
+                        Итого: {{ student.total_paid|floatformat:0 }} сом
+                    </span>
+                    <a href="{% url 'payment_create_for_student' student.pk %}" class="btn-ghost" style="padding:4px 10px;font-size:12px">
+                        <i class="bi bi-plus"></i> Добавить
+                    </a>
+                </div>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Дата</th><th>Сумма</th><th>Тип</th><th>Способ</th><th>Статус</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for p in payments %}
+                    <tr>
+                        <td class="text-mono" style="font-size:12px">{{ p.payment_date|date:"d.m.Y" }}</td>
+                        <td class="text-mono" style="color:var(--green);font-weight:600">{{ p.amount|floatformat:0 }} сом</td>
+                        <td style="font-size:13px;color:var(--text-dim)">{{ p.get_payment_type_display }}</td>
+                        <td><span class="badge-custom badge-gray">{{ p.get_method_display }}</span></td>
+                        <td>
+                            <span class="badge-custom {% if p.status == 'confirmed' %}badge-green{% elif p.status == 'pending' %}badge-yellow{% else %}badge-red{% endif %}">
+                                {{ p.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'payment_delete' p.pk %}" class="btn-ghost" style="padding:3px 7px;font-size:11px;color:var(--red)">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">Нет платежей</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

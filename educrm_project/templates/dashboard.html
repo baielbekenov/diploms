@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% block title %}Дашборд{% endblock %}
+{% block page_title %}Дашборд{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'student_create' %}" class="btn-primary-custom">
+    <i class="bi bi-plus-lg"></i> Новый студент
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.revenue-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 100px;
+    padding: 0 4px;
+}
+.rev-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+}
+.rev-bar {
+    width: 100%;
+    background: var(--accent-dim);
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+    transition: all 0.3s;
+    position: relative;
+    border: 1px solid rgba(59,130,246,0.3);
+}
+.rev-bar:hover { background: var(--accent); cursor: default; }
+.rev-bar:hover::after {
+    content: attr(data-val);
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-family: var(--mono);
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.rev-label { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card blue">
+            <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+            <div class="stat-value">{{ stats.total_students }}</div>
+            <div class="stat-label">Активных студентов</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card green">
+            <div class="stat-icon"><i class="bi bi-cash-stack"></i></div>
+            <div class="stat-value text-mono">{{ stats.monthly_revenue|floatformat:0 }}</div>
+            <div class="stat-label">Выручка за месяц (сом)</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card yellow">
+            <div class="stat-icon"><i class="bi bi-collection-fill"></i></div>
+            <div class="stat-value">{{ stats.total_groups }}</div>
+            <div class="stat-label">Активных групп</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card purple">
+            <div class="stat-icon"><i class="bi bi-person-check-fill"></i></div>
+            <div class="stat-value">{{ stats.new_students_month }}</div>
+            <div class="stat-label">Новых в этом месяце</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- Revenue Chart -->
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Выручка по месяцам</span>
+            </div>
+            <div class="card-body">
+                <div class="revenue-bar" id="revenueChart"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Groups -->
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Активные группы</span>
+                <a href="{% url 'group_list' %}" class="btn-ghost" style="padding:4px 10px;font-size:12px">Все</a>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Группа</th>
+                        <th>Курс</th>
+                        <th>Учитель</th>
+                        <th>Студенты</th>
+                        <th>Расписание</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in active_groups %}
+                    <tr>
+                        <td><a href="{% url 'group_detail' group.pk %}" style="color:var(--accent);text-decoration:none;font-weight:600">{{ group.name }}</a></td>
+                        <td><span class="badge-custom badge-blue">{{ group.course.name }}</span></td>
+                        <td>{{ group.teacher|default:"—" }}</td>
+                        <td>
+                            <span class="text-mono" style="font-size:13px">{{ group.student_count }}/{{ group.max_students }}</span>
+                            <div class="progress-bar-custom" style="width:60px">
+                                <div class="progress-fill" style="width:{% widthratio group.student_count group.max_students 100 %}%"></div>
+                            </div>
+                        </td>
+                        <td style="color:var(--text-dim);font-size:12px">{{ group.get_schedule_display }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center" style="color:var(--text-muted);padding:30px">Нет активных групп</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Recent Students -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Новые студенты</span>
+                <a href="{% url 'student_list' %}" class="btn-ghost" style="padding:4px 10px;font-size:12px">Все</a>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Студент</th><th>Телефон</th><th>Источник</th><th>Дата</th></tr>
+                </thead>
+                <tbody>
+                    {% for s in recent_students %}
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px">
+                                <div class="avatar-sm">{{ s.first_name|first|upper }}</div>
+                                <a href="{% url 'student_detail' s.pk %}" style="color:var(--text);text-decoration:none;font-weight:600">{{ s.full_name }}</a>
+                            </div>
+                        </td>
+                        <td class="text-mono" style="font-size:12px;color:var(--text-dim)">{{ s.phone }}</td>
+                        <td>
+                            <span class="badge-custom badge-gray">{{ s.get_source_display }}</span>
+                        </td>
+                        <td style="color:var(--text-muted);font-size:12px">{{ s.registered_at|date:"d.m.Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-center" style="color:var(--text-muted);padding:30px">Нет студентов</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Payments -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Последние платежи</span>
+                <a href="{% url 'payment_list' %}" class="btn-ghost" style="padding:4px 10px;font-size:12px">Все</a>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Студент</th><th>Сумма</th><th>Способ</th><th>Дата</th></tr>
+                </thead>
+                <tbody>
+                    {% for p in recent_payments %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'student_detail' p.student.pk %}" style="color:var(--text);text-decoration:none;font-weight:600">{{ p.student.full_name }}</a>
+                        </td>
+                        <td class="text-mono" style="color:var(--green);font-weight:600">{{ p.amount|floatformat:0 }} сом</td>
+                        <td>
+                            <span class="badge-custom {% if p.method == 'cash' %}badge-green{% elif p.method == 'transfer' %}badge-blue{% else %}badge-purple{% endif %}">
+                                {{ p.get_method_display }}
+                            </span>
+                        </td>
+                        <td style="color:var(--text-muted);font-size:12px">{{ p.payment_date|date:"d.m.Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-center" style="color:var(--text-muted);padding:30px">Нет платежей</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const revenueData = {{ revenue_data|safe }};
+const maxVal = Math.max(...revenueData.map(d => d.amount), 1);
+const container = document.getElementById('revenueChart');
+
+revenueData.forEach((d, i) => {
+    const heightPct = Math.max((d.amount / maxVal) * 100, 3);
+    const col = document.createElement('div');
+    col.className = 'rev-col';
+    col.innerHTML = `
+        <div class="rev-bar" style="height:${heightPct}%" data-val="${d.amount.toLocaleString('ru')} сом"></div>
+        <div class="rev-label">${d.month}</div>
+    `;
+    container.appendChild(col);
+});
+</script>
+{% endblock %}

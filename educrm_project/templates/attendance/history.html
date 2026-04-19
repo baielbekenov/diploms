@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}История посещаемости — {{ group.name }}{% endblock %}
+{% block page_title %}Посещаемость: {{ group.name }}{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'attendance_mark' group.pk %}" class="btn-primary-custom">
+    <i class="bi bi-check2-all"></i> Отметить сегодня
+</a>
+<a href="{% url 'group_detail' group.pk %}" class="btn-ghost">
+    <i class="bi bi-arrow-left"></i> К группе
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-auto">
+        <form method="get" style="display:flex;gap:10px;align-items:flex-end">
+            <div>
+                <label class="form-label">Фильтр по дате</label>
+                <input type="date" name="date" value="{{ date_filter|default:'' }}" class="form-control" style="width:180px">
+            </div>
+            <button type="submit" class="btn-ghost">Показать</button>
+            <a href="{% url 'attendance_history' group.pk %}" class="btn-ghost">Сбросить</a>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">Записей: {{ records.count }}</span>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Студент</th>
+                <th>Статус</th>
+                <th>Заметка</th>
+                <th>Отметил</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in records %}
+            <tr>
+                <td class="text-mono" style="font-size:12px;font-weight:600">{{ r.date|date:"d.m.Y" }}</td>
+                <td>
+                    <a href="{% url 'student_detail' r.enrollment.student.pk %}" style="color:var(--text);text-decoration:none;font-weight:600">
+                        {{ r.enrollment.student.full_name }}
+                    </a>
+                </td>
+                <td>
+                    <span class="badge-custom
+                        {% if r.status == 'present' %}badge-green
+                        {% elif r.status == 'absent' %}badge-red
+                        {% elif r.status == 'late' %}badge-yellow
+                        {% else %}badge-blue{% endif %}">
+                        {{ r.get_status_display }}
+                    </span>
+                </td>
+                <td style="color:var(--text-dim);font-size:13px">{{ r.notes|default:"—" }}</td>
+                <td style="color:var(--text-muted);font-size:12px">{{ r.marked_by|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        <i class="bi bi-calendar-x"></i>
+                        Нет записей посещаемости
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

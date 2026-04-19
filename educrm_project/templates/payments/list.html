@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Платежи{% endblock %}
+{% block page_title %}Платежи{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'payment_create' %}" class="btn-primary-custom">
+    <i class="bi bi-plus-lg"></i> Записать платёж
+</a>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;gap:12px;margin-bottom:20px;align-items:flex-end;flex-wrap:wrap">
+    <form method="get" style="display:flex;gap:10px;align-items:flex-end">
+        <div>
+            <label class="form-label">Месяц</label>
+            <input type="month" name="month" value="{{ month|default:'' }}" class="form-control" style="width:180px">
+        </div>
+        <button type="submit" class="btn-ghost">Применить</button>
+        <a href="{% url 'payment_list' %}" class="btn-ghost">Сбросить</a>
+    </form>
+    <div style="margin-left:auto">
+        <div style="text-align:right">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Итого за период</div>
+            <div class="text-mono" style="font-size:24px;font-weight:600;color:var(--green)">{{ total|floatformat:0 }} сом</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Студент</th>
+                <th>Группа</th>
+                <th>Тип</th>
+                <th>Сумма</th>
+                <th>Способ</th>
+                <th>Статус</th>
+                <th>Квитанция</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in payments %}
+            <tr>
+                <td class="text-mono" style="font-size:12px;font-weight:600">{{ p.payment_date|date:"d.m.Y" }}</td>
+                <td>
+                    <a href="{% url 'student_detail' p.student.pk %}" style="color:var(--text);text-decoration:none;font-weight:600">
+                        {{ p.student.full_name }}
+                    </a>
+                </td>
+                <td style="color:var(--text-dim);font-size:13px">
+                    {% if p.enrollment %}{{ p.enrollment.group.name }}{% else %}—{% endif %}
+                </td>
+                <td style="font-size:12px;color:var(--text-dim)">{{ p.get_payment_type_display }}</td>
+                <td class="text-mono" style="color:var(--green);font-weight:700;font-size:14px">{{ p.amount|floatformat:0 }} сом</td>
+                <td>
+                    <span class="badge-custom
+                        {% if p.method == 'cash' %}badge-green
+                        {% elif p.method == 'transfer' %}badge-blue
+                        {% else %}badge-purple{% endif %}">
+                        {{ p.get_method_display }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge-custom
+                        {% if p.status == 'confirmed' %}badge-green
+                        {% elif p.status == 'pending' %}badge-yellow
+                        {% else %}badge-red{% endif %}">
+                        {{ p.get_status_display }}
+                    </span>
+                </td>
+                <td class="text-mono" style="font-size:11px;color:var(--text-muted)">{{ p.receipt_number|default:"—" }}</td>
+                <td>
+                    <a href="{% url 'payment_delete' p.pk %}" class="btn-ghost" style="padding:3px 7px;font-size:11px;color:var(--red)" title="Удалить">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">
+                    <div class="empty-state">
+                        <i class="bi bi-cash-stack"></i>
+                        Нет платежей за выбранный период
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

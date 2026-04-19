@@ -22,11 +22,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Копируем проект
 COPY . .
 
-# Собираем статику (если используешь)
-RUN python manage.py collectstatic --noinput
-
 # Открываем порт
-EXPOSE 7000
+EXPOSE 7777
 
 # Команда запуска
-CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:7000"]
+CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:7777"]

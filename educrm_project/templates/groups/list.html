@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Группы{% endblock %}
+{% block page_title %}Группы{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'group_create' %}" class="btn-primary-custom">
+    <i class="bi bi-plus-lg"></i> Создать группу
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filter tabs -->
+<div style="display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap">
+    <a href="{% url 'group_list' %}" class="btn-ghost {% if not status_filter %}active-tab{% endif %}" style="{% if not status_filter %}background:var(--accent-dim);color:var(--accent);border-color:var(--accent){% endif %}">Все</a>
+    <a href="?status=active" class="btn-ghost" style="{% if status_filter == 'active' %}background:var(--green-dim);color:var(--green);border-color:var(--green){% endif %}">Активные</a>
+    <a href="?status=planned" class="btn-ghost" style="{% if status_filter == 'planned' %}background:var(--yellow-dim);color:var(--yellow);border-color:var(--yellow){% endif %}">Планируются</a>
+    <a href="?status=completed" class="btn-ghost" style="{% if status_filter == 'completed' %}background:var(--purple-dim);color:var(--purple);border-color:var(--purple){% endif %}">Завершены</a>
+</div>
+
+<div class="row g-3">
+    {% for group in groups %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="card-body" style="padding:20px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                    <div>
+                        <a href="{% url 'group_detail' group.pk %}" style="color:var(--text);text-decoration:none;font-size:16px;font-weight:700">
+                            {{ group.name }}
+                        </a>
+                        <div style="color:var(--text-muted);font-size:12px;margin-top:2px">{{ group.course.name }}</div>
+                    </div>
+                    <span class="badge-custom {% if group.status == 'active' %}badge-green{% elif group.status == 'planned' %}badge-yellow{% else %}badge-gray{% endif %}">
+                        {{ group.get_status_display }}
+                    </span>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+                    <div>
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Учитель</div>
+                        <div style="font-size:13px;font-weight:500">{{ group.teacher|default:"—" }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Расписание</div>
+                        <div style="font-size:13px;font-weight:500">{{ group.get_schedule_display }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Время</div>
+                        <div class="text-mono" style="font-size:13px">
+                            {% if group.time_start %}{{ group.time_start|time:"H:i" }}{% if group.time_end %} – {{ group.time_end|time:"H:i" }}{% endif %}{% else %}—{% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Аудитория</div>
+                        <div style="font-size:13px">{{ group.room|default:"—" }}</div>
+                    </div>
+                </div>
+
+                <!-- Students count bar -->
+                <div style="margin-bottom:16px">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                        <span style="font-size:11px;color:var(--text-muted)">Студентов</span>
+                        <span class="text-mono" style="font-size:12px;font-weight:600">
+                            {{ group.enrolled_count }}/{{ group.max_students }}
+                            {% if group.is_full %}<span class="badge-custom badge-red" style="margin-left:6px;font-size:10px">Полная</span>{% endif %}
+                        </span>
+                    </div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill {% if group.is_full %}{% else %}{% endif %}"
+                             style="width:{% if group.max_students %}{% widthratio group.enrolled_count group.max_students 100 %}{% else %}0{% endif %}%;{% if group.is_full %}background:var(--red){% endif %}"></div>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:8px">
+                    <a href="{% url 'group_detail' group.pk %}" class="btn-primary-custom" style="flex:1;justify-content:center;font-size:12px;padding:7px">
+                        <i class="bi bi-eye"></i> Открыть
+                    </a>
+                    <a href="{% url 'attendance_mark' group.pk %}" class="btn-ghost" style="font-size:12px;padding:7px 10px" title="Отметить посещаемость">
+                        <i class="bi bi-check2-all"></i>
+                    </a>
+                    <a href="{% url 'group_edit' group.pk %}" class="btn-ghost" style="font-size:12px;padding:7px 10px" title="Редактировать">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="empty-state">
+            <i class="bi bi-collection"></i>
+            Нет групп. <a href="{% url 'group_create' %}" style="color:var(--accent)">Создать первую группу</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

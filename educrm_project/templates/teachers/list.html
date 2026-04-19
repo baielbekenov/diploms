@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Учителя{% endblock %}
+{% block page_title %}Учителя{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'teacher_create' %}" class="btn-primary-custom">
+    <i class="bi bi-plus-lg"></i> Добавить учителя
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    {% for t in teachers %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="card-body" style="padding:24px">
+                <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+                    <div style="width:52px;height:52px;background:var(--purple-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:var(--purple);flex-shrink:0">
+                        {{ t.first_name|first|upper }}
+                    </div>
+                    <div>
+                        <a href="{% url 'teacher_detail' t.pk %}" style="color:var(--text);text-decoration:none;font-size:15px;font-weight:700;display:block">{{ t.full_name }}</a>
+                        <div class="text-mono" style="font-size:12px;color:var(--text-muted)">{{ t.phone }}</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:14px">
+                    <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Курсы</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px">
+                        {% for c in t.courses.all %}
+                        <span class="badge-custom badge-blue" style="font-size:11px">{{ c.name }}</span>
+                        {% empty %}
+                        <span style="color:var(--text-muted);font-size:12px">Не назначены</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+                    <div style="background:var(--bg-hover);border-radius:8px;padding:10px">
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Групп</div>
+                        <div class="text-mono" style="font-size:18px;font-weight:600">{{ t.groups.count }}</div>
+                    </div>
+                    <div style="background:var(--bg-hover);border-radius:8px;padding:10px">
+                        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Ставка/час</div>
+                        <div class="text-mono" style="font-size:14px;font-weight:600;color:var(--green)">{{ t.salary_rate|floatformat:0 }}</div>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:8px">
+                    <a href="{% url 'teacher_detail' t.pk %}" class="btn-ghost" style="flex:1;justify-content:center;font-size:12px">
+                        <i class="bi bi-eye"></i> Профиль
+                    </a>
+                    <a href="{% url 'teacher_edit' t.pk %}" class="btn-ghost" style="font-size:12px;padding:7px 10px">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="empty-state">
+            <i class="bi bi-person-badge"></i>
+            Нет учителей. <a href="{% url 'teacher_create' %}" style="color:var(--accent)">Добавить первого</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
