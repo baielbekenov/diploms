@@ -26,4 +26,4 @@ COPY . .
 EXPOSE 7777
 
 # Команда запуска
-CMD ["gunicorn", "main.wsgi:application", "--bind", "0.0.0.0:7777"]
+CMD ["gunicorn", "educrm.wsgi:application", "--bind", "0.0.0.0:7777"]
