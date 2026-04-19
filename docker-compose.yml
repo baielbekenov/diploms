@@ -7,7 +7,7 @@ services:
     container_name: educrm
     command: gunicorn educrm.wsgi:application --bind 0.0.0.0:7777
     volumes:
-      - .:/app
+      - ./educrm_project:/app
       - educrm_volume:/app/staticfiles
     ports:
       - "7777:7777"
