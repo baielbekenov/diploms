@@ -140,7 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app", "https://*.ngrok-free.dev", "https://medicines-separated-richard-joins.trycloudflare.com/", "https://trust-currencies-wearing-diamond.trycloudflare.com"]
 
-TELEGRAM_BOT_TOKEN = "8461162231:AAHjGse28mc2fghjHKej1asAzPA3TH_zsWI"
+TELEGRAM_BOT_TOKEN = "8831705212:AAH_n5jpaWh7PhbmLxkJaA09IlLUea-MU-U"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
