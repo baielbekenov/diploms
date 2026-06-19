@@ -142,6 +142,15 @@ CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app", "https://*.ngrok-free.dev", 
 
 TELEGRAM_BOT_TOKEN = "8831705212:AAH_n5jpaWh7PhbmLxkJaA09IlLUea-MU-U"
 
+# ID Telegram-чата администратора ресторана.
+# Сюда будут приходить уведомления о новых заказах и бронированиях с кнопками подтверждения.
+# Получить свой ID можно через @userinfobot в Telegram.
+TELEGRAM_ADMIN_CHAT_ID = ""  # ← Заменить на реальный ID администратора
+
+# URL вашего WebApp (домен, на котором развёрнут сайт ресторана).
+# Используется ботом в команде /start для кнопки открытия меню.
+WEBAPP_URL = "https://yourdomain.com"  # ← Заменить на реальный URL
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 

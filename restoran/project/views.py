@@ -26,24 +26,32 @@ logger = logging.getLogger(__name__)
 #  TELEGRAM
 # ──────────────────────────────────────────────
 
-def tg_send(chat_id, text):
+def tg_send(chat_id, text, reply_markup=None):
+    """
+    Отправляет HTML-сообщение в указанный Telegram-чат.
+    Принимает необязательный параметр reply_markup (dict) для инлайн-клавиатур.
+    """
     token = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
     if not token or not chat_id:
         return
+    payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
+    if reply_markup:
+        payload["reply_markup"] = reply_markup
     try:
         requests.post(
             f"https://api.telegram.org/bot{token}/sendMessage",
-            json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"},
+            json=payload,
             timeout=5,
         )
     except requests.RequestException as e:
         logger.warning("Telegram send error: %s", e)
 
 
-def tg_notify_admin(text):
+def tg_notify_admin(text, reply_markup=None):
+    """Отправляет уведомление администратору ресторана. Поддерживает инлайн-клавиатуры."""
     admin_id = getattr(settings, "TELEGRAM_ADMIN_CHAT_ID", None)
     if admin_id:
-        tg_send(admin_id, text)
+        tg_send(admin_id, text, reply_markup=reply_markup)
 
 
 # ──────────────────────────────────────────────
@@ -286,14 +294,21 @@ def create_order(request):
           f"📌 Статус: ожидает подтверждения",
     )
 
-    # ── Telegram: администратору ──
+    # ── Telegram: администратору с инлайн-кнопками управления заказом ──
+    admin_keyboard = {
+        "inline_keyboard": [[
+            {"text": "✅ Подтвердить", "callback_data": f"order_confirm_{order.pk}"},
+            {"text": "❌ Отменить",   "callback_data": f"order_cancel_{order.pk}"},
+        ]]
+    }
     tg_notify_admin(
         f"🔔 <b>Новый заказ #{order.pk}</b>\n"
-        f"👤 {user.get_full_name() or user.username}\n\n"
+        f"👤 {user.get_full_name() or user.username}  @{user.username or '—'}\n\n"
         + "\n".join(lines)
         + f"\n\n💰 <b>Итого: {total:.0f} сом</b>\n"
           f"💳 {order.get_payment_method_display()}\n"
           + (f"📝 {comment}" if comment else ""),
+        reply_markup=admin_keyboard,
     )
 
     return JsonResponse({"ok": True, "order_id": order.pk})
@@ -392,7 +407,13 @@ def reservation_view(request):
         + "\nПодтвердим в течение 15 минут. Ждём вас! 🍽",
     )
 
-    # ── Telegram: администратору ──
+    # ── Telegram: администратору с инлайн-кнопками управления бронью ──
+    admin_res_keyboard = {
+        "inline_keyboard": [[
+            {"text": "✅ Подтвердить", "callback_data": f"res_confirm_{reservation.pk}"},
+            {"text": "❌ Отменить",   "callback_data": f"res_cancel_{reservation.pk}"},
+        ]]
+    }
     tg_notify_admin(
         f"📅 <b>Новая бронь #{reservation.pk}</b>\n"
         f"👤 {name}  📞 {phone}\n"
@@ -400,6 +421,7 @@ def reservation_view(request):
         f"🪑 Стол №{table.number}  👥 {guests} гост.\n"
         + (f"📝 {notes}\n" if notes else "")
         + f"tg: @{user.username or '—'}",
+        reply_markup=admin_res_keyboard,
     )
 
     messages.success(request, f"Бронь #{reservation.pk} оформлена! Ожидайте сообщения в Telegram.")
