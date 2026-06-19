@@ -140,7 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app", "https://*.ngrok-free.dev", "https://medicines-separated-richard-joins.trycloudflare.com/", "https://trust-currencies-wearing-diamond.trycloudflare.com"]
 
-TELEGRAM_BOT_TOKEN = "8831705212:AAH_n5jpaWh7PhbmLxkJaA09IlLUea-MU-U"
+TELEGRAM_BOT_TOKEN = "8953388143:AAHi-EFdP3ZwFwBNt2_Ht3n2_TEXlm8ct1I"
 
 # ID Telegram-чата администратора ресторана.
 # Сюда будут приходить уведомления о новых заказах и бронированиях с кнопками подтверждения.
